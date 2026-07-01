@@ -1,13 +1,15 @@
 <script setup lang="ts">
+import { translateByLegacyKey, translateDocumentType, translateLandholderType, translateHoldingType } from '@/i18n/dynamicTranslations'
+import { useGettext } from 'vue3-gettext'
 import { faDownload, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+const { $gettext } = useGettext()
 
 import type { DocumentForView, PropertyForView } from '@/adapters/propertyAdapter'
 import GlobalLoading from '@/components/GlobalLoading.vue'
 import WholeWidthCardComponent from '@/components/WholeWidthCardComponent.vue'
-import { useLanguageContext } from '@/context/language/useLanguageContext'
 import {
   fetchPropertyDetails,
   fetchPropertyImage,
@@ -21,8 +23,6 @@ const router = useRouter()
 const route = useRoute()
 
 const { isLoading, showLoading, hideLoading } = useGlobalLoading()
-const { getLanguage, language } = useLanguageContext()
-
 const property = ref<PropertyForView>({} as PropertyForView)
 const image = ref<string | null>(null)
 const placeholderImage = `${import.meta.env.VITE_BASE_URL}/images/map_property_details.png`
@@ -81,9 +81,7 @@ watch(
   () => {
     documents.value.forEach((doc) => {
       doc.type = doc.documentType
-        ? (doc.type = getLanguage(
-            `register.propertyRights.form.documentTypeOptions.${doc.documentType.toLowerCase()}`,
-          ))
+        ? translateDocumentType(doc.documentType, $gettext)
         : ''
     })
   },
@@ -109,37 +107,37 @@ const handleRegistrationButton = async (event: Event) => {
       <!-- Property Info -->
       <div class="px-3 py-2 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <h3 class="text-lg font-bold">{{ getLanguage('details.property') }}</h3>
-          <p class="pt-3">{{ getLanguage('details.propertyName') }}</p>
+          <h3 class="text-lg font-bold">{{ $gettext('PROPERTY') }}</h3>
+          <p class="pt-3">{{ $gettext('Property Name') }}</p>
           <p>{{ property.propertyName }}</p>
         </div>
         <div class="mt-2 md:mt-5">
-          <p>{{ getLanguage('details.code') }}</p>
+          <p>{{ $gettext('Code') }}</p>
           <p>{{ property.code }}</p>
         </div>
       </div>
 
       <div class="px-3 py-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
-          <p>{{ getLanguage('details.state') }}</p>
+          <p>{{ $gettext('State') }}</p>
           <p>{{ property.stateDistrict }}</p>
         </div>
         <div>
-          <p>{{ getLanguage('details.city') }}</p>
+          <p>{{ $gettext('City') }}</p>
           <p>{{ property.municipality }}</p>
         </div>
         <div>
-          <p>{{ getLanguage('details.zipCode') }}</p>
+          <p>{{ $gettext('Zip Code') }}</p>
           <p>{{ property.zipcode }}</p>
         </div>
         <div>
-          <p>{{ getLanguage('details.locationZone') }}</p>
+          <p>{{ $gettext('Location Zone') }}</p>
           <p>{{ property.locationZone }}</p>
         </div>
       </div>
 
       <div class="mx-3 mt-3">
-        <p>{{ getLanguage('details.descriptionOfPropertyAccess') }}</p>
+        <p>{{ $gettext('Description of Property Access') }}</p>
         <p>{{ getAttribute('property_access_description') }}</p>
 
         <hr class="mt-3 mb-2 border" />
@@ -147,7 +145,7 @@ const handleRegistrationButton = async (event: Event) => {
         <div class="pt-3 pb-2 flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <button class="flex items-center primary-color px-3" @click="sendToEditRegistry">
             <FontAwesomeIcon :icon="faPenToSquare" class="text-green-700 mr-2" />
-            <p class="font-bold primary-color">{{ getLanguage('details.editRegistry') }}</p>
+            <p class="font-bold primary-color">{{ $gettext('Edit') }}</p>
           </button>
 
           <div class="hidden sm:block w-px h-6 mx-5 bg-gray-300"></div>
@@ -174,7 +172,7 @@ const handleRegistrationButton = async (event: Event) => {
             <template v-else>
               <FontAwesomeIcon :icon="faDownload" class="text-green-700 mr-2" />
             </template>
-            <p class="font-bold primary-color">{{ getLanguage('details.downloadReceipt') }}</p>
+            <p class="font-bold primary-color">{{ $gettext('Download Receipt') }}</p>
           </button>
         </div>
       </div>
@@ -194,7 +192,7 @@ const handleRegistrationButton = async (event: Event) => {
         bg-color="rgb(249,250,249)"
         class="w-full lg:w-2/5 p-4 flex flex-col min-h-96"
       >
-        <h1 class="text-lg font-bold">{{ getLanguage('details.registeredAreas') }}</h1>
+        <h1 class="text-lg font-bold">{{ $gettext('REGISTERED AREAS') }}</h1>
 
         <div class="flex flex-col sm:flex-row items-start sm:items-center mt-4 gap-2">
           <h1 class="text-[17px] font-bold mr-2">Lon:</h1>
@@ -208,7 +206,7 @@ const handleRegistrationButton = async (event: Event) => {
             class="h-[30px] w-[30px] bg-[#9a9b9a] border-dashed border-[2px] border-[#f7ff00]"
           ></div>
           <h1 class="text-[17px] font-bold truncate">
-            {{ getLanguage('layers.vectorization.ruralProperty.displayName') }}:
+            {{ $gettext('Rural Property Area') }}:
           </h1>
           <p class="text-right">
             {{
@@ -231,7 +229,7 @@ const handleRegistrationButton = async (event: Event) => {
           ></div>
 
           <h1 class="text-[17px] font-bold truncate">
-            {{ getLanguage(subarea.layerData?.displayNameKey!) }}:
+            {{ translateByLegacyKey(subarea.layerData?.displayNameKey!, $gettext) }}:
           </h1>
 
           <p v-if="subarea.properties.area === 0" class="text-right">N/A</p>
@@ -252,7 +250,7 @@ const handleRegistrationButton = async (event: Event) => {
           ></div>
 
           <h1 class="text-[17px] font-bold truncate">
-            Buffer {{ getLanguage(bufferArea.layerData?.displayNameKey!) }}:
+            Buffer {{ translateByLegacyKey(bufferArea.layerData?.displayNameKey!, $gettext) }}:
           </h1>
 
           <p v-if="bufferArea.properties.area === 0" class="text-right">N/A</p>
@@ -265,23 +263,23 @@ const handleRegistrationButton = async (event: Event) => {
 
     <!-- Owner Table -->
     <WholeWidthCardComponent v-if="property" bg-color="rgb(249,250,249)">
-      <h1 class="text-lg font-bold px-3 py-2">{{ getLanguage('details.owner') }}</h1>
+      <h1 class="text-lg font-bold px-3 py-2">{{ $gettext('OWNER') }}</h1>
 
       <div class="px-3 py-2 mt-2 grid grid-cols-2 sm:grid-cols-5 gap-4 border-b">
         <div>
-          <p>{{ getLanguage('details.name') }}</p>
+          <p>{{ $gettext('Name') }}</p>
         </div>
         <div>
-          <p>{{ getLanguage('details.id') }}</p>
+          <p>{{ $gettext('ID') }}</p>
         </div>
         <div>
-          <p>{{ getLanguage('details.dateOfBirth') }}</p>
+          <p>{{ $gettext('Date of birth') }}</p>
         </div>
         <div>
-          <p>{{ getLanguage('details.ownerOrHolder') }}</p>
+          <p>{{ $gettext('Owner or Holder') }}</p>
         </div>
         <div>
-          <p>{{ getLanguage('details.mothersName') }}</p>
+          <p>{{ $gettext('Mother\'s name') }}</p>
         </div>
       </div>
 
@@ -301,7 +299,7 @@ const handleRegistrationButton = async (event: Event) => {
         </div>
         <div>
           <p>
-            {{ getLanguage(`register.landholdersInformation.table.${owner.landholderType}`) }}
+            {{ translateLandholderType(owner.landholderType, $gettext) }}
           </p>
         </div>
         <div :title="owner.mothersName">
@@ -312,28 +310,28 @@ const handleRegistrationButton = async (event: Event) => {
 
     <!-- Registrars Table -->
     <WholeWidthCardComponent v-if="property" bg-color="rgb(249,250,249)">
-      <h1 class="text-lg font-bold px-3 py-2">{{ getLanguage('details.registrars') }}</h1>
+      <h1 class="text-lg font-bold px-3 py-2">{{ $gettext('REGISTRAR\'S') }}</h1>
 
       <div
         class="px-3 py-2 mt-2 grid grid-cols-1 md:grid-cols-[100px_1fr_1fr_1fr_1fr_1fr] gap-4 border-b"
       >
         <div>
-          <p>{{ getLanguage('register.propertyRights.list.type.title') }}</p>
+          <p>{{ $gettext('Type') }}</p>
         </div>
         <div>
-          <p>{{ getLanguage('details.documentType') }}</p>
+          <p>{{ $gettext('Document Type') }}</p>
         </div>
         <div>
-          <p>{{ getLanguage('details.titleDeedOrLandDocument') }}</p>
+          <p>{{ $gettext('Title deed/Land Document') }}</p>
         </div>
         <div>
-          <p>{{ getLanguage('details.registeredPropertyName') }}</p>
+          <p>{{ $gettext('Registered Property Name') }}</p>
         </div>
         <div>
-          <p>{{ getLanguage('details.cityStateOfNotaryOffice') }}</p>
+          <p>{{ $gettext('City/State of Notary Office') }}</p>
         </div>
         <div>
-          <p>{{ getLanguage('details.documentArea') }}</p>
+          <p>{{ $gettext('Document Area') }}</p>
         </div>
       </div>
 
@@ -342,15 +340,11 @@ const handleRegistrationButton = async (event: Event) => {
         :key="doc.id"
         class="px-3 py-2 grid grid-cols-1 md:grid-cols-[100px_1fr_1fr_1fr_1fr_1fr] gap-4 border-b"
       >
-        <div :title="getLanguage(`register.propertyRights.list.type.${doc.holdingType}`)">
-          <p>{{ getLanguage(`register.propertyRights.list.type.${doc.holdingType}`) }}</p>
+        <div :title="translateHoldingType(doc.holdingType, $gettext)">
+          <p>{{ translateHoldingType(doc.holdingType, $gettext) }}</p>
         </div>
         <div
-          :title="
-            getLanguage(
-              `register.propertyRights.form.documentTypeOptions.${doc.documentType.toLowerCase()}`,
-            )
-          "
+          :title="translateDocumentType(doc.documentType, $gettext)"
         >
           <p>
             {{ doc.type }}

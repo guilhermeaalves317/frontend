@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useLanguageContext } from '@/context/language/useLanguageContext'
+import { useGettext } from 'vue3-gettext'
 import { useFormContext } from '@/context/useFormContext'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+const { $gettext } = useGettext()
 
 const route = useRoute()
 const router = useRouter()
 
-const { getLanguage } = useLanguageContext()
 const { resetFormData } = useFormContext()
 const propertyEditing = computed(() => {
   if (localStorage.getItem('EditingRegistry')) {
@@ -34,16 +34,16 @@ const handleCancelEditing = () => {
 const getBackBarText = computed(() => {
   if (route.path.includes('/register')) {
     return isEditingProperty.value
-      ? getLanguage('register.route-editing')
-      : getLanguage('register.route')
+      ? $gettext('Edit property')
+      : $gettext('Register property')
   }
   if (route.path.includes('properties/details/')) {
-    return getLanguage('details.route')
+    return $gettext('Property Details')
   }
 
   switch (route.path) {
     case '/properties':
-      return getLanguage('properties.route')
+      return $gettext('Rural Properties')
     case '/profile':
       return 'Profile'
     default:
@@ -69,16 +69,16 @@ const goBack = () => {
         </button>
         <span class="ml-4 text-3xl justify-self-start">{{ getBackBarText }}</span>
         <span
-          v-if="isEditingProperty && getBackBarText.includes(getLanguage('register.route-editing'))"
+          v-if="isEditingProperty && getBackBarText.includes($gettext('Edit property'))"
           class="text-2xl justify-self-start"
           >: {{ propertyEditingName }}</span
         >
       </div>
       <div
-        v-if="isEditingProperty && getBackBarText.includes(getLanguage('register.route-editing'))"
+        v-if="isEditingProperty && getBackBarText.includes($gettext('Edit property'))"
       >
         <button class="br-button secondary" @click.prevent="handleCancelEditing">
-          {{ getLanguage('register.route-editing-cancel-button') }}
+          {{ $gettext('Cancel editing') }}
         </button>
       </div>
     </div>

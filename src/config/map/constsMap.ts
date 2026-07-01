@@ -1,54 +1,60 @@
+import type { Language } from 'vue3-gettext'
 import Layers from '@/config/map/layers.ts'
-import languages from '@/config/languages.json'
-import { DEFAULT_LANGUAGE, normalizeLanguage, type SupportedLanguage } from '@/utils/language'
+import { translateByLegacyKey } from '@/i18n/dynamicTranslations'
+import { DEFAULT_LOCALE } from '@/i18n/locale'
+import { LEGACY_KEY_MAP } from '@/i18n/legacyKeyMap'
 
 /** Memorial descritivo usa inglês independente do idioma da UI. */
-export const DESCRIPTIVE_MEMORIAL_LANGUAGE: SupportedLanguage = DEFAULT_LANGUAGE
+export const DESCRIPTIVE_MEMORIAL_LANGUAGE = DEFAULT_LOCALE
 
-export const getTranslatedDescriptiveMemorial = (lang?: string) => {
-  const normalized = normalizeLanguage(lang ?? DESCRIPTIVE_MEMORIAL_LANGUAGE)
-  return (
-    languages[normalized as SupportedLanguage]?.descriptiveMemorial ??
-    languages[DEFAULT_LANGUAGE].descriptiveMemorial
-  )
+type GettextFn = Language['$gettext']
+
+const DESCRIPTIVE_MEMORIAL_PREFIX = 'descriptiveMemorial.'
+
+export const getTranslatedDescriptiveMemorial = ($gettext: GettextFn) => {
+  const result: Record<string, string> = {}
+
+  for (const [key, msgid] of Object.entries(LEGACY_KEY_MAP)) {
+    if (key.startsWith(DESCRIPTIVE_MEMORIAL_PREFIX)) {
+      const shortKey = key.slice(DESCRIPTIVE_MEMORIAL_PREFIX.length)
+      result[shortKey] = $gettext(msgid)
+    }
+  }
+
+  return result
 }
 
 export const MAP_LAYERS = Layers
 
-export function getTranslatedLayers(getLanguageFn: (key: string) => string) {
+export function getTranslatedLayers($gettext: GettextFn) {
   const layersCopy = JSON.parse(JSON.stringify(MAP_LAYERS))
 
-  const translateObject = (obj: any): void => {
+  const translateObject = (obj: Record<string, unknown>): void => {
     if (Array.isArray(obj)) {
-      // Se for um array, percorre cada item
       obj.forEach((item) => {
         if (typeof item === 'object' && item !== null) {
-          translateObject(item)
+          translateObject(item as Record<string, unknown>)
         }
       })
     } else if (typeof obj === 'object' && obj !== null) {
-      // Se for um objeto, percorre cada propriedade
       for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
-          if (key.endsWith('Key') && typeof obj[key] === 'string') {
-            // Traduz propriedades que terminam com 'Key'
-            const translationKey = obj[key] as string
-            const translatedText = getLanguageFn(translationKey)
-            const baseKey = key.replace('Key', '')
-            obj[baseKey] = translatedText
-          } else if (key === 'toggle' && typeof obj[key] === 'object' && obj[key] !== null) {
-            // Traduz especificamente as chaves active e inactive do toggle
-            const toggle = obj[key] as Record<string, string>
-            if (toggle.active) {
-              toggle.active = getLanguageFn(`common.${toggle.active}`) || toggle.active
-            }
-            if (toggle.inactive) {
-              toggle.inactive = getLanguageFn(`common.${toggle.inactive}`) || toggle.inactive
-            }
-          } else if (typeof obj[key] === 'object' && obj[key] !== null) {
-            // Recursivamente traduz objetos e arrays aninhados
-            translateObject(obj[key])
+        if (!Object.prototype.hasOwnProperty.call(obj, key)) continue
+
+        if (key.endsWith('Key') && typeof obj[key] === 'string') {
+          const legacyKey = obj[key] as string
+          const translatedText = translateByLegacyKey(legacyKey, $gettext)
+          const baseKey = key.replace('Key', '')
+          obj[baseKey] = translatedText
+        } else if (key === 'toggle' && typeof obj[key] === 'object' && obj[key] !== null) {
+          const toggle = obj[key] as Record<string, string>
+          if (toggle.active === 'active') {
+            toggle.active = $gettext('Active')
           }
+          if (toggle.inactive === 'inactive') {
+            toggle.inactive = $gettext('Inactive')
+          }
+        } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+          translateObject(obj[key] as Record<string, unknown>)
         }
       }
     }

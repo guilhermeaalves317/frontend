@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { useGettext } from 'vue3-gettext'
 import { computed, ref, watch, onMounted, onUnmounted } from 'vue'
 import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.css'
+const { $gettext } = useGettext()
 
-import { useLanguageContext } from '@/context/language/useLanguageContext'
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -20,10 +21,8 @@ const emits = defineEmits<{ (e: 'update:modelValue', value: string): void }>()
 const inputRef = ref<HTMLInputElement | null>(null)
 const flatpickrInstance = ref<flatpickr.Instance | null>(null)
 
-const { getLanguage } = useLanguageContext()
-
 const requiredText = computed(() =>
-  (props.label || '').indexOf(getLanguage('register.registrarDetails.form.required')),
+  (props.label || '').indexOf($gettext('(Required)')),
 )
 const labelToError = computed(() =>
   requiredText.value === -1
@@ -162,10 +161,10 @@ const openCalendar = () => {
     </div>
 
     <span v-if="shouldShowError" class="text-red-600" id="date-required-error">
-      {{ labelToError }}{{ getLanguage('register.errors.isRequired') }}!
+      {{ labelToError }}{{ $gettext('is required') }}!
     </span>
     <span v-if="dateUpperLimitError" class="text-red-600" id="date-upper-limit-error">
-      {{ labelToError }}{{ getLanguage('register.errors.dateUpperLimit') }}!
+      {{ labelToError }}{{ $gettext('must be less than or equal to today\'s date') }}!
     </span>
   </div>
 </template>

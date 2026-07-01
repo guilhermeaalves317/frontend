@@ -1,4 +1,5 @@
 import { mount, VueWrapper } from '@vue/test-utils'
+import { ref } from 'vue'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import BackBarComponent from '../../../src/components/BackBarComponent.vue'
@@ -18,16 +19,10 @@ const router = createRouter({
   routes,
 })
 
-vi.mock('@/context/language/useLanguageContext', () => ({
-  useLanguageContext: () => ({
-    getLanguage: (key: string) => {
-      const translations: Record<string, string> = {
-        'register.route': 'Register property',
-        'properties.route': 'Properties',
-        'details.route': 'Property Details',
-      }
-      return translations[key] || key
-    },
+vi.mock('vue3-gettext', () => ({
+  useGettext: () => ({
+    current: ref('pt-br'),
+    $gettext: (msgid: string) => msgid,
   }),
 }))
 

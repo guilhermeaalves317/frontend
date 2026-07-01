@@ -1,4 +1,5 @@
 import { mount, VueWrapper } from '@vue/test-utils'
+import { ref } from 'vue'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import CalendarComponent from '@/components/CalendarComponent.vue'
 
@@ -20,16 +21,10 @@ vi.mock('@fortawesome/vue-fontawesome', () => ({
   }
 }))
 
-vi.mock('@/context/language/useLanguageContext', () => ({
-  useLanguageContext: () => ({
-    getLanguage: (key: string) => {
-      const translations: Record<string, string> = {
-        'register.errors.isRequired': 'is required',
-        'register.errors.dateUpperLimit': 'cannot be in the future',
-        'register.registrarDetails.form.required': '(Required)',
-      }
-      return translations[key] || key
-    },
+vi.mock('vue3-gettext', () => ({
+  useGettext: () => ({
+    current: ref('pt-br'),
+    $gettext: (msgid: string) => msgid,
   }),
 }))
 

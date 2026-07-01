@@ -31,13 +31,6 @@ vi.mock('../../../src/context/FormContext.vue', () => ({
   },
 }))
 
-vi.mock('../../../src/context/language/LanguageContext.vue', () => ({
-  default: {
-    name: 'LanguageContext',
-    template: '<div data-testid="language-context"><slot /></div>',
-  },
-}))
-
 vi.mock('../../../src/context/validators/ValidatorContext.vue', () => ({
   default: {
     name: 'ValidatorContext',
@@ -88,7 +81,6 @@ describe('App', () => {
 
     expect(wrapper.find('[data-testid="form-context"]').exists()).toBe(true)
     expect(wrapper.find('[data-testid="validator-context"]').exists()).toBe(true)
-    expect(wrapper.find('[data-testid="language-context"]').exists()).toBe(true)
   })
 
   it('has correct CSS classes for layout', () => {

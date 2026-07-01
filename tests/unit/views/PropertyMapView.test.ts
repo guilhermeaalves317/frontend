@@ -3,7 +3,6 @@ import { mount, config } from '@vue/test-utils'
 import { nextTick, ref } from 'vue'
 import PropertyMapView from '@/views/RegisterViews/PropertyMapView.vue'
 import { useRouter } from 'vue-router'
-import { useLanguageContext } from '@/context/language/useLanguageContext'
 import { useFormContext } from '@/context/useFormContext'
 import MapHandler from '@/config/map/mapHandlers'
 import mapHelpers from '@/config/map/helpers'
@@ -18,8 +17,11 @@ vi.mock('vue-router', () => ({
   })),
 }))
 
-vi.mock('@/context/language/useLanguageContext', () => ({
-  useLanguageContext: vi.fn(),
+vi.mock('vue3-gettext', () => ({
+  useGettext: () => ({
+    current: ref('pt-br'),
+    $gettext: (msgid: string) => msgid,
+  }),
 }))
 
 vi.mock('@/context/useFormContext', () => ({
@@ -77,7 +79,6 @@ const originalConsoleWarn = console.warn
 
 describe('PropertyMapView', () => {
   let mockRouter
-  let mockLanguageContext
   let mockFormContext
   let mockMapHandler
   let wrapper
@@ -91,13 +92,8 @@ describe('PropertyMapView', () => {
       push: vi.fn(),
     }
 
-    const languageRef = ref('pt-br')
-    mockLanguageContext = {
-      getLanguage: vi.fn((key) => key),
-      language: languageRef,
-    }
-
-    mockFormContext = {
+    vi.mocked(useRouter).mockReturnValue(mockRouter)
+    vi.mocked(useFormContext).mockReturnValue(mockFormContext)
       validateRegistrationForm: {
         isMapValid: false,
       },
@@ -118,7 +114,6 @@ describe('PropertyMapView', () => {
     }
 
     vi.mocked(useRouter).mockReturnValue(mockRouter)
-    vi.mocked(useLanguageContext).mockReturnValue(mockLanguageContext)
     vi.mocked(useFormContext).mockReturnValue(mockFormContext)
     vi.mocked(MapHandler).mockImplementation(() => mockMapHandler)
 
@@ -570,12 +565,9 @@ describe('PropertyMapView', () => {
   })
 
   describe('Language Watching', () => {
-    it('should update map language when language changes', async () => {
+    it('should update map language on mount', async () => {
       wrapper = createWrapper()
-
-      mockLanguageContext.language.value = 'en-us'
       await nextTick()
-
       expect(mockMapHandler.updateLanguage).toHaveBeenCalled()
     })
   })

@@ -18,16 +18,18 @@ import { RouterLink } from 'vue-router'
 import { faGlobe, faUser, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { computed } from 'vue'
-import { useLanguageContext } from '@/context/language/useLanguageContext'
+import { useGettext } from 'vue3-gettext'
+import { useLocale } from '@/i18n/useLocale'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
-const { language, setLanguage, getLanguage } = useLanguageContext()
+const { $gettext } = useGettext()
+const { locale, setLocale } = useLocale()
 
 const selectedLanguage = computed({
-  get: () => language.value,
+  get: () => locale.value,
   set: (newLang) => {
-    if (newLang !== language.value) {
-      setLanguage(newLang)
+    if (newLang !== locale.value) {
+      setLocale(newLang)
     }
   },
 })
@@ -87,16 +89,16 @@ const selectedLanguage = computed({
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuLabel>{{ getLanguage('homepage.avatar.title') }}</DropdownMenuLabel>
+              <DropdownMenuLabel>{{ $gettext('My account') }}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <RouterLink to="/profile">
                 <DropdownMenuItem>
-                  {{ getLanguage('homepage.avatar.profile') }}
+                  {{ $gettext('Profile') }}
                 </DropdownMenuItem>
               </RouterLink>
               <RouterLink to="/logout">
                 <DropdownMenuItem>
-                  {{ getLanguage('homepage.avatar.logout') }}
+                  {{ $gettext('Logout') }}
                 </DropdownMenuItem>
               </RouterLink>
             </DropdownMenuContent>

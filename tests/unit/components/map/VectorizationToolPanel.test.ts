@@ -1,10 +1,12 @@
 import { mount, VueWrapper } from '@vue/test-utils'
+import { ref } from 'vue'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import VectorizationToolPanel from '@/components/map/VectorizationToolPanel.vue'
 
-vi.mock('@/context/language/useLanguageContext', () => ({
-  useLanguageContext: () => ({
-    getLanguage: (key: string) => key,
+vi.mock('vue3-gettext', () => ({
+  useGettext: () => ({
+    current: ref('pt-br'),
+    $gettext: (msgid: string) => msgid,
   }),
 }))
 

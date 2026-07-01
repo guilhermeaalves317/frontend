@@ -8,7 +8,7 @@
           :key="key"
           class="flex items-center bg-gray-100 px-3 py-1 rounded-full text-sm"
         >
-          <span class="capitalize">{{ getLanguage(`properties.filter.${key}`) }}:</span>
+          <span class="capitalize">{{ translateFilterKey(key, $gettext) }}:</span>
           <span class="ml-1 font-medium">{{ value }}</span>
           <button
             @click="removeFilter(key as string)"
@@ -21,7 +21,7 @@
 
       <button @click="isModalOpen = true" class="px-3 py-2 mr-3 gap-2 br-button primary">
         <FontAwesomeIcon :icon="faFilter" />
-        {{ getLanguage('properties.filter.filter') }}
+        {{ $gettext('Filter') }}
       </button>
     </div>
 
@@ -38,7 +38,7 @@
       class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg px-2 py-3 z-50 w-96 max-h-[90vh] flex flex-col"
     >
       <div class="flex justify-between items-center mb-2">
-        <h2 class="text-xl font-semibold p-0">{{ getLanguage('properties.filter.filter') }}</h2>
+        <h2 class="text-xl font-semibold p-0">{{ $gettext('Filter') }}</h2>
         <button @click="isModalOpen = false" class="text-gray-500 hover:text-gray-700">
           <!-- &times; -->
           <FontAwesomeIcon :icon="faClose" />
@@ -53,14 +53,14 @@
           <div>
             <div class="flex items-center mb-2">
               <FontAwesomeIcon :icon="faLocationDot" style="color: #42916e" />
-              <p class="text-xl text-center">{{ getLanguage('properties.filter.filter') }}</p>
+              <p class="text-xl text-center">{{ $gettext('Filter') }}</p>
             </div>
             <div class="space-y-4">
               <div>
                 <SelectInputComponent
                   id="state"
-                  :placeholder="getLanguage('properties.filter.selectState')"
-                  :label="getLanguage('properties.filter.stateDistrict')"
+                  :placeholder="$gettext('Select State')"
+                  :label="$gettext('State')"
                   :items="states"
                   v-model="form.stateDistrict"
                 >
@@ -72,8 +72,8 @@
               <div>
                 <SelectInputComponent
                   id="city"
-                  :placeholder="getLanguage('properties.filter.selectCity')"
-                  :label="getLanguage('properties.filter.municipality')"
+                  :placeholder="$gettext('Select City')"
+                  :label="$gettext('City')"
                   :items="cities"
                   v-model="form.municipality"
                 >
@@ -93,7 +93,7 @@
           <div>
             <div class="flex items-center mb-2">
               <FontAwesomeIcon :icon="faHomeUser" style="color: #42916e" />
-              <p class="text-xl text-center">{{ getLanguage('properties.filter.details') }}</p>
+              <p class="text-xl text-center">{{ $gettext('Details') }}</p>
             </div>
             <div class="space-y-4">
               <div>
@@ -101,7 +101,7 @@
                   :label="'Property Name'"
                   id="property-name"
                   v-model="form.propertyName"
-                  :placeholder="getLanguage('properties.filter.propertyName')"
+                  :placeholder="$gettext('Property Name')"
                 >
                   <template v-slot:icon>
                     <FontAwesomeIcon :icon="faFileLines" />
@@ -112,7 +112,7 @@
                 <!-- <label class="block text-sm text-gray-700 mb-1">Property Registration Number</label> -->
                 <div class="flex gap-2 items-end">
                   <TextInputComponent
-                    :label="getLanguage('properties.filter.code')"
+                    :label="$gettext('Property Registration Number')"
                     id="property-number"
                     v-model="currentCode"
                     placeholder="0000000000"
@@ -122,7 +122,7 @@
                     </template>
                   </TextInputComponent>
                   <button @click="addPropertyNumber" type="button" class="px-4 br-button primary">
-                    {{ getLanguage('properties.filter.add') }}
+                    {{ $gettext('Add') }}
                   </button>
                 </div>
                 <div v-if="code.length > 0" class="mt-2 space-y-1">
@@ -147,10 +147,10 @@
           <!-- Actions -->
           <div class="flex justify-end gap-3 pt-4">
             <button type="button" @click="cleanForm" class="px-4 py-2 br-button secondary">
-              {{ getLanguage('properties.filter.clean') }}
+              {{ $gettext('Clean') }}
             </button>
             <button type="submit" class="px-4 py-2 br-button primary">
-              {{ getLanguage('properties.filter.apply') }}
+              {{ $gettext('Apply') }}
             </button>
           </div>
         </div>
@@ -160,7 +160,8 @@
 </template>
 
 <script setup lang="ts">
-import { useLanguageContext } from '@/context/language/useLanguageContext'
+import { translateFilterKey } from '@/i18n/dynamicTranslations'
+import { useGettext } from 'vue3-gettext'
 import {
   faCity,
   faClose,
@@ -173,11 +174,11 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { computed, reactive, ref, watch } from 'vue'
+
+const { $gettext } = useGettext()
 import States from '../config/states_municipalities.json'
 import SelectInputComponent from './SelectInputComponent.vue'
 import TextInputComponent from './TextInputComponent.vue'
-
-const { getLanguage } = useLanguageContext()
 
 interface FilterForm {
   stateDistrict: string

@@ -1,16 +1,13 @@
 import { mount, VueWrapper } from '@vue/test-utils'
 import { SelectItem, SelectValue } from 'radix-vue'
+import { ref } from 'vue'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import SelectInputComponent from '@/components/SelectInputComponent.vue'
 
-vi.mock('@/context/language/useLanguageContext', () => ({
-  useLanguageContext: () => ({
-    getLanguage: (key: string) => {
-      const translations: Record<string, string> = {
-        'register.errors.isRequired': 'is required',
-      }
-      return translations[key] || key
-    },
+vi.mock('vue3-gettext', () => ({
+  useGettext: () => ({
+    current: ref('pt-br'),
+    $gettext: (msgid: string) => msgid,
   }),
 }))
 

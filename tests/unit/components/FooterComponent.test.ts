@@ -6,13 +6,12 @@ import { ref } from 'vue'
 describe('FooterComponent', () => {
   let wrapper: VueWrapper
 
-  vi.mock('@/context/language/useLanguageContext', () => ({
-    useLanguageContext: () => ({
-      language: ref('en-us'),
-      setLanguage: vi.fn(),
-      getLanguage: (key: string) => key,
-    }),
-  }))
+  vi.mock('vue3-gettext', () => ({
+  useGettext: () => ({
+    current: ref('pt-br'),
+    $gettext: (msgid: string) => msgid,
+  }),
+}))
 
   beforeAll(() => {
     wrapper = mount(FooterComponent)

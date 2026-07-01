@@ -1,12 +1,11 @@
 <script setup lang="ts">
+import { useGettext } from 'vue3-gettext'
 import CardComponent from '@/components/CardComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faNoteSticky, faMap, faUser, faCircleQuestion } from '@fortawesome/free-solid-svg-icons'
 import { RouterLink } from 'vue-router'
+const { $gettext } = useGettext()
 
-import { useLanguageContext } from '@/context/language/useLanguageContext'
-
-const { getLanguage } = useLanguageContext()
 import { ref } from 'vue'
 
 const showBanner = ref(true)
@@ -23,8 +22,8 @@ const showBanner = ref(true)
         <i class="fas fa-info-circle fa-lg" aria-hidden="true"></i>
       </div>
       <div class="content" role="alert">
-        <span class="message-title">{{ getLanguage('homepage.demoBannerTitle') }}</span>
-        <span class="message-body">{{ getLanguage('homepage.demoBanner') }}</span>
+        <span class="message-title">{{ $gettext('Information.') }}</span>
+        <span class="message-body">{{ $gettext(' This environment is for demonstration purposes. Data is deleted daily and should not be considered permanent.') }}</span>
       </div>
       <div class="close">
         <button class="br-button circle small" type="button" @click="showBanner = false">
@@ -40,7 +39,7 @@ const showBanner = ref(true)
 
         <div class="flex flex-col justify-center w-full">
           <h1 class="text-lg md:text-xl pl-2 mb-3">
-            {{ getLanguage('homepage.title') }}
+            {{ $gettext('Choose the option based on what you want to do.') }}
           </h1>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-2 mr-5">
@@ -54,7 +53,7 @@ const showBanner = ref(true)
                   />
                 </div>
                 <div>
-                  <h2 class="text-lg">{{ getLanguage('homepage.registerProperty') }}</h2>
+                  <h2 class="text-lg">{{ $gettext('Register property') }}</h2>
                 </div>
               </RouterLink>
             </CardComponent>
@@ -68,7 +67,7 @@ const showBanner = ref(true)
                   />
                 </div>
                 <div>
-                  <h2 class="text-lg">{{ getLanguage('homepage.properties') }}</h2>
+                  <h2 class="text-lg">{{ $gettext('Properties') }}</h2>
                 </div>
               </RouterLink>
             </CardComponent>
@@ -82,7 +81,7 @@ const showBanner = ref(true)
                   />
                 </div>
                 <div>
-                  <h2 class="text-lg">{{ getLanguage('homepage.profile') }}</h2>
+                  <h2 class="text-lg">{{ $gettext('Profile') }}</h2>
                 </div>
               </RouterLink>
             </CardComponent>
@@ -99,7 +98,7 @@ const showBanner = ref(true)
               target="_blank"
               class="text-[#1351b4] text-lg font-bold pl-2 cursor-pointer hover:underline"
             >
-              {{ getLanguage('homepage.learnMore') }}
+              {{ $gettext('Learn more about the project.') }}
             </a>
           </div>
         </div>

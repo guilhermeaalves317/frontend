@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useGettext } from 'vue3-gettext'
 import type { LandHoldersData } from '@/context/LandHoldersInformation'
-import { useLanguageContext } from '@/context/language/useLanguageContext'
 import { faMap, faPenToSquare, faTrash, faTimes } from '@fortawesome/free-solid-svg-icons'
+const { $gettext } = useGettext()
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import type { PropType } from 'vue'
@@ -12,8 +13,6 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const editingIndex = ref<number | null>(null)
-
-const { getLanguage } = useLanguageContext()
 
 const props = defineProps({
   landHoldersData: {
@@ -52,16 +51,16 @@ defineExpose({
     <thead>
       <tr>
         <th class="font-bold">
-          {{ getLanguage('register.landholdersInformation.table.header.legalPersonality') }}
+          {{ $gettext('Legal personality') }}
         </th>
         <th class="font-bold">
-          {{ getLanguage('register.landholdersInformation.table.header.taxpayer') }}
+          {{ $gettext('Taxpayer ID') }}
         </th>
         <th class="font-bold">
-          {{ getLanguage('register.landholdersInformation.table.header.nameCompany') }}
+          {{ $gettext('Name') }}
         </th>
         <th class="font-bold">
-          {{ getLanguage('register.landholdersInformation.table.header.actions') }}
+          {{ $gettext('Actions') }}
         </th>
       </tr>
     </thead>
@@ -74,8 +73,8 @@ defineExpose({
         <td>
           {{
             el.legalPersonality == 'natural_person'
-              ? getLanguage('register.landholdersInformation.table.naturalPerson')
-              : getLanguage('register.landholdersInformation.table.legalEntity')
+              ? $gettext('Natural Person')
+              : $gettext('Legal Entity')
           }}
         </td>
         <td>{{ el.id }}</td>
@@ -106,7 +105,7 @@ defineExpose({
         </td>
       </tr>
       <tr v-if="props.landHoldersData.length == 0">
-        <td colSpan="4">{{ getLanguage('register.landholdersInformation.table.emptyData') }}</td>
+        <td colSpan="4">{{ $gettext('There is no data to show.') }}</td>
       </tr>
     </tbody>
   </table>

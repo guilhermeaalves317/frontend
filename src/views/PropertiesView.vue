@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { useGettext } from 'vue3-gettext'
 import PropertyCardComponent from '@/components/PropertyCardComponent.vue'
 import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
+const { $gettext } = useGettext()
 
-import { useLanguageContext } from '@/context/language/useLanguageContext'
 import { fetchProperties, fetchReceipt } from '@/services/propertiesService'
 import type { Property } from '@/interfaces/Property'
 import PropertyFilterComponent from '@/components/PropertyFilterComponent.vue'
@@ -12,8 +13,6 @@ import { useGlobalLoading } from '@/states/useGlobalLoading'
 import GlobalLoading from '@/components/GlobalLoading.vue'
 
 const { isLoading, showLoading, hideLoading } = useGlobalLoading()
-
-const { getLanguage } = useLanguageContext()
 
 const currentPage = ref(1)
 const itemsPerPage = 7
@@ -108,7 +107,7 @@ const visiblePages = computed(() => {
 <template>
   <div class="flex justify-between">
     <p class="ml-5 text-sm text-red-500 italic">
-      {{ getLanguage('properties.propertyInfo') }}
+      {{ $gettext('Only properties where you are the owner or representative will be displayed.') }}
     </p>
     <PropertyFilterComponent @update-filters="(queryParams) => handleFilterChange(queryParams)" />
   </div>
@@ -123,11 +122,11 @@ const visiblePages = computed(() => {
           class="mt-5 mx-auto"
         />
         <h4 class="text-lg font-bold text-center">
-          {{ getLanguage('properties.propertyCardTitle') }}
+          {{ $gettext('REGISTER MORE PROPERTIES') }}
         </h4>
         <div class="flex justify-center">
           <RouterLink to="/register/property_map" class="br-button secondary mt-3">{{
-            getLanguage('properties.registerProperty')
+            $gettext('Register Property')
           }}</RouterLink>
         </div>
       </div>
@@ -153,7 +152,7 @@ const visiblePages = computed(() => {
       :disabled="currentPage === 1"
       @click="goToPage(currentPage - 1)"
     >
-      {{ getLanguage('properties.pagination.previous') }}
+      {{ $gettext('Previous') }}
     </button>
 
     <button
@@ -176,7 +175,7 @@ const visiblePages = computed(() => {
       :disabled="currentPage === totalPages"
       @click="goToPage(currentPage + 1)"
     >
-      {{ getLanguage('properties.pagination.next') }}
+      {{ $gettext('Next') }}
     </button>
   </div>
 </template>

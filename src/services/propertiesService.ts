@@ -5,6 +5,7 @@ import axios from '@/services/axios'
 import ApiService from '@/services/axios'
 import mapConfigurationDataImport from '@/config/map/layers.ts'
 import { adaptFormDataToPayload } from '@/adapters/propertyPayloadAdapter'
+import { normalizeLocale } from '@/i18n/locale'
 
 interface PagedPropertiesResponse {
   properties: Property[]
@@ -76,10 +77,18 @@ export async function fetchPropertyImage(id: string) {
 
 export const fetchReceipt = async (id: string, autoDownload = false): Promise<void> => {
   const locationZone = Intl.DateTimeFormat().resolvedOptions().timeZone
-  fetch(
-    `${import.meta.env.VITE_DPG_URL}/properties/${id}/receipt${locationZone ? '?locationZone=' + locationZone : ''}`,
-    { method: 'GET', headers: { responseType: 'arraybuffer' } },
-  )
+  const locale = normalizeLocale(localStorage.getItem('language'))
+  const params = new URLSearchParams({ locale })
+  if (locationZone) {
+    params.set('locationZone', locationZone)
+  }
+  fetch(`${import.meta.env.VITE_DPG_URL}/properties/${id}/receipt?${params.toString()}`, {
+    method: 'GET',
+    headers: {
+      responseType: 'arraybuffer',
+      'Accept-Language': locale,
+    },
+  })
     .then(async (response) => {
       const arrayBuffer = await response.arrayBuffer()
       const blob = new Blob([arrayBuffer], { type: 'application/pdf' })

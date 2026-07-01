@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { useGettext } from 'vue3-gettext'
 import { computed, useSlots } from 'vue'
+const { $gettext } = useGettext()
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
-import { useLanguageContext } from '@/context/language/useLanguageContext'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -28,7 +29,7 @@ const hasSlot = (name: string) => {
 }
 
 const requiredText = computed(() =>
-  (props.label || '').indexOf(getLanguage('register.registrarDetails.form.required')),
+  (props.label || '').indexOf($gettext('(Required)')),
 )
 const labelToError = computed(() =>
   requiredText.value === -1
@@ -41,7 +42,6 @@ const updateValue = (event: Event) => {
   emits('update:modelValue', input.value)
 }
 
-const { getLanguage } = useLanguageContext()
 </script>
 
 <template>
@@ -79,12 +79,12 @@ const { getLanguage } = useLanguageContext()
     </div>
     <div v-for="error in props.errors" :key="error.$uid" class="text-red-600">
       <span v-if="error.$validator == 'required'"
-        >{{ labelToError }} {{ getLanguage('register.errors.isRequired') }}!</span
+        >{{ labelToError }} {{ $gettext('is required') }}!</span
       >
       <span v-else-if="error.$validator == 'date'"
-        >{{ labelToError }} {{ getLanguage('register.errors.dateFormat') }}!</span
+        >{{ labelToError }} {{ $gettext('must be in yyyy-MM-DD format') }}!</span
       >
-      <span v-else>{{ getLanguage('register.errors.checkValue') }}!</span>
+      <span v-else>{{ $gettext('Check the value') }}!</span>
     </div>
   </div>
 </template>

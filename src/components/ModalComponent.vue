@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useLanguageContext } from '@/context/language/useLanguageContext'
-
+import { useGettext } from 'vue3-gettext'
+const { $gettext } = useGettext()
 interface ModalProps {
   isOpen: boolean
   hideButtons?: boolean
@@ -9,7 +9,6 @@ interface ModalProps {
   title?: string
 }
 
-const { getLanguage } = useLanguageContext()
 const { isOpen, hideButtons = false, onClose, onConfirm, title } = defineProps<ModalProps>()
 </script>
 
@@ -25,7 +24,7 @@ const { isOpen, hideButtons = false, onClose, onConfirm, title } = defineProps<M
           :class="`br-button ${onConfirm ? 'secondary' : 'primary'} mt-3 mt-sm-0 ml-sm-3`"
           @click="onClose"
         >
-          {{ getLanguage('register.closeButton') }}
+          {{ $gettext('Close') }}
         </button>
         <button
           v-if="onConfirm"
@@ -33,7 +32,7 @@ const { isOpen, hideButtons = false, onClose, onConfirm, title } = defineProps<M
           data-dismiss="true"
           @click="onConfirm"
         >
-          {{ getLanguage('register.confirmButton') }}
+          {{ $gettext('OK') }}
         </button>
       </div>
     </div>

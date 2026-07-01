@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { useLanguageContext } from '@/context/language/useLanguageContext'
+import { translateDocumentType, translateHoldingType } from '@/i18n/dynamicTranslations'
+import { useGettext } from 'vue3-gettext'
 import type { PropertyRightsData } from '@/context/PropertyRights'
 import { faMap, faPenToSquare, faTrash, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import type { PropType } from 'vue'
 import { ref } from 'vue'
+const { $gettext } = useGettext()
 
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
 const editingIndex = ref<number | null>(null)
-
-const { getLanguage } = useLanguageContext()
 
 const { propertyRightsData } = defineProps({
   propertyRightsData: {
@@ -63,17 +63,17 @@ const cityState = (el: any) => {
   <table>
     <thead>
       <tr>
-        <th class="font-bold">{{ getLanguage('register.propertyRights.list.type.title') }}</th>
-        <th class="font-bold">{{ getLanguage('register.propertyRights.form.documentType') }}</th>
+        <th class="font-bold">{{ $gettext('Type') }}</th>
+        <th class="font-bold">{{ $gettext('Document Type') }}</th>
         <th class="font-bold">
-          {{ getLanguage('register.propertyRights.list.titleDeedOrLandDocument') }}
+          {{ $gettext('Title deed/ Land Document') }}
         </th>
-        <th class="font-bold">{{ getLanguage('register.propertyRights.list.propertyName') }}</th>
+        <th class="font-bold">{{ $gettext('Property Name') }}</th>
         <th class="font-bold">
-          {{ getLanguage('register.propertyRights.list.stateAndCityOfTheNotaryOffice') }}
+          {{ $gettext('State and City of the Notary Office') }}
         </th>
-        <th class="font-bold">{{ getLanguage('register.propertyRights.form.area') + '(ha)' }}</th>
-        <th class="font-bold">{{ getLanguage('register.propertyRights.list.actions') }}</th>
+        <th class="font-bold">{{ $gettext('Area') + '(ha)' }}</th>
+        <th class="font-bold">{{ $gettext('Actions') }}</th>
       </tr>
     </thead>
     <tbody>
@@ -82,14 +82,10 @@ const cityState = (el: any) => {
         v-for="(el, ix) in propertyRightsData"
         :key="ix"
       >
-        <td>{{ getLanguage(`register.propertyRights.list.type.${el.propertyLandholding}`) }}</td>
+        <td>{{ translateHoldingType(el.propertyLandholding, $gettext) }}</td>
         <td>
           {{
-            el.documentType
-              ? getLanguage(
-                  `register.propertyRights.form.documentTypeOptions.${String(el.documentType).toLowerCase()}`,
-                )
-              : ''
+            el.documentType ? translateDocumentType(String(el.documentType), $gettext) : ''
           }}
         </td>
         <td>{{ el.titleDeedLandDocument }}</td>
@@ -123,7 +119,7 @@ const cityState = (el: any) => {
       </tr>
 
       <tr v-if="propertyRightsData.length == 0">
-        <td colspan="7">{{ getLanguage('register.propertyRights.list.noDataToShow') }}</td>
+        <td colspan="7">{{ $gettext('There is no data to show.') }}</td>
       </tr>
     </tbody>
   </table>

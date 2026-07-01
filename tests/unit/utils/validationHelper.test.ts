@@ -5,31 +5,11 @@ import { ValidationHelper } from '@/utils/validationHelper'
 describe('ValidationHelper', () => {
   let mockValidation: any
   let mockFormData: any
-  let mockGetLanguage: any
+  let mockGettext: any
   let validationHelper: ValidationHelper
 
   beforeEach(() => {
-    mockGetLanguage = vi.fn((key: string) => {
-      const translations: { [key: string]: string } = {
-        'register.registrarDetails.card': 'Registrar Details',
-        'register.landholdersInformation.card': 'Landholders Information',
-        'register.ruralProperty.card': 'Rural Property',
-        'register.propertyRights.card': 'Property Rights',
-        'register.registrarDetails.form.id': 'ID',
-        'register.registrarDetails.form.name': 'Name',
-        'register.registrarDetails.representativeData': 'Representative Data',
-        'register.landholdersInformation.form.id': 'Landholder ID',
-        'register.landholdersInformation.warningModal': 'Add at least one landholder',
-        'register.propertyRights.form.area': 'Area',
-        'register.propertyRights.form.book': 'Book',
-        'register.propertyRights.invalidForm': 'Add at least one document',
-        'register.propertyRights.validationError.header': 'Required fields missing:',
-        'register.propertyRights.validationError.step': 'Step',
-        'register.propertyRights.validationError.fields': 'Fields',
-        'register.propertyRights.validationError.instruction': 'Please fill all required fields.',
-      }
-      return translations[key] || key
-    })
+    mockGettext = vi.fn((msgid: string) => msgid)
 
     mockValidation = ref({
       registrarDetails: {
@@ -74,7 +54,7 @@ describe('ValidationHelper', () => {
     validationHelper = new ValidationHelper({
       validation: mockValidation,
       formData: mockFormData,
-      getLanguage: mockGetLanguage,
+      $gettext: mockGettext,
     })
   })
 

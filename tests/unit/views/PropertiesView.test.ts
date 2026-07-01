@@ -20,10 +20,10 @@ vi.mock('@/services/propertiesService', () => ({
   })),
 }))
 
-vi.mock('@/context/language/useLanguageContext', () => ({
-  useLanguageContext: () => ({
-    getLanguage: () => 'pt',
-    setLanguage: vi.fn(),
+vi.mock('vue3-gettext', () => ({
+  useGettext: () => ({
+    current: ref('pt-br'),
+    $gettext: (msgid: string) => msgid,
   }),
 }))
 

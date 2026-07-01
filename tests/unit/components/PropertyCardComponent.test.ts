@@ -1,5 +1,6 @@
 import { mount, VueWrapper } from '@vue/test-utils'
 import MockAdapter from 'axios-mock-adapter'
+import { ref } from 'vue'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createRouter, createWebHistory } from 'vue-router'
 import PropertyCardComponent from '@/components/PropertyCardComponent.vue'
@@ -12,18 +13,10 @@ const router = createRouter({
   routes,
 })
 
-vi.mock('@/context/language/useLanguageContext', () => ({
-  useLanguageContext: () => ({
-    getLanguage: (key: string) => {
-      const translations: Record<string, string> = {
-        'properties.propertyCard.code': 'Code',
-        'properties.propertyCard.state': 'State',
-        'properties.propertyCard.city': 'City',
-        'properties.propertyCard.details': 'Details',
-        'properties.propertyCard.registration': 'Registry',
-      }
-      return translations[key] || key
-    },
+vi.mock('vue3-gettext', () => ({
+  useGettext: () => ({
+    current: ref('pt-br'),
+    $gettext: (msgid: string) => msgid,
   }),
 }))
 

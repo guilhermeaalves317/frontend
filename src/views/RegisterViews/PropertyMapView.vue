@@ -1,6 +1,9 @@
 <script setup>
+import { translateLayerError, translateByLegacyKey } from '@/i18n/dynamicTranslations'
+import { useGettext } from 'vue3-gettext'
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+const { $gettext, current: language } = useGettext()
 
 import MapaDpg from '@rural-environmental-registry/map_component'
 import VectorizationToolPanel from '@/components/map/VectorizationToolPanel.vue'
@@ -13,7 +16,6 @@ import {
   getTranslatedLayers,
   getTranslatedDescriptiveMemorial,
 } from '@/config/map/constsMap.ts'
-import { useLanguageContext } from '@/context/language/useLanguageContext'
 import MapHandler from '@/config/map/mapHandlers.ts'
 import { useFormContext } from '@/context/useFormContext'
 import diffArea from '@/config/diff_area.json'
@@ -35,16 +37,15 @@ const processingStatus = ref({
 
 const router = useRouter()
 const route = useRoute()
-const { getLanguage, language } = useLanguageContext()
 const { validateRegistrationForm } = useFormContext()
 
-const currentLayers = computed(() => getTranslatedLayers(getLanguage))
+const currentLayers = computed(() => getTranslatedLayers($gettext))
 
 const showDescriptiveMemorial = ref(false)
 const descriptiveMemorial = computed(() => {
   return {
     show: showDescriptiveMemorial.value,
-    customTexts: getTranslatedDescriptiveMemorial(),
+    customTexts: getTranslatedDescriptiveMemorial($gettext),
   }
 })
 
@@ -125,15 +126,17 @@ const mapHandlerCallback = (data) => {
 
 const notifyMapErrors = (data) => {
   const { errorType } = data.error
-  window.alert(getLanguage(`layers.${errorType}`))
+  window.alert(translateLayerError(errorType, $gettext))
 }
 
 const notifyRemovedLayers = (data) => {
   const { removedLayers } = data
   const layerNames = removedLayers
-    .map((layerCode) => getLanguage(vectorizedLayer.value[layerCode].displayNameKey))
+    .map((layerCode) =>
+      translateByLegacyKey(vectorizedLayer.value[layerCode].displayNameKey, $gettext),
+    )
     .join(' | ')
-  const removedLayerMessage = getLanguage('layers.layerRemoval').replace('{layers}', layerNames)
+  const removedLayerMessage = $gettext('One or more layers ({layers}) presented errors and were removed from the map after being processed. Please verify and try again.').replace('{layers}', layerNames)
 
   window.alert(removedLayerMessage)
 }
@@ -355,15 +358,15 @@ watch(
       <button class="br-button primary" @click="processLayers" :disabled="!canProcessLayers">
         {{
           processingStatus.isProcessing
-            ? getLanguage('mapComponents.propertyMapView.processing')
-            : getLanguage('register.saveButton')
+            ? $gettext('Processing...')
+            : $gettext('Save')
         }}
       </button>
       <button class="br-button primary" @click="submitMap" :disabled="!isFormValid">
         {{
           isLoading
-            ? getLanguage('mapComponents.propertyMapView.processing')
-            : getLanguage('register.nextButton')
+            ? $gettext('Processing...')
+            : $gettext('Next')
         }}
       </button>
     </div>

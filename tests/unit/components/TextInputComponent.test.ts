@@ -1,17 +1,12 @@
 import { DOMWrapper, mount, VueWrapper } from '@vue/test-utils'
+import { ref } from 'vue'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import TextInputComponent from '@/components/TextInputComponent.vue'
 
-vi.mock('@/context/language/useLanguageContext', () => ({
-  useLanguageContext: () => ({
-    getLanguage: (key: string) => {
-      const translations: Record<string, string> = {
-        'register.errors.isRequired': 'is required',
-        'register.errors.dateFormat': 'must be at YYYY-MM-DD format',
-        'register.errors.checkValue': 'Check the value',
-      }
-      return translations[key] || key
-    },
+vi.mock('vue3-gettext', () => ({
+  useGettext: () => ({
+    current: ref('pt-br'),
+    $gettext: (msgid: string) => msgid,
   }),
 }))
 

@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "build": "npm run gettext:compile && run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
+    "gettext:extract": "vue-gettext-extract --config vue-gettext.config.ts",
+    "gettext:compile": "node ../scripts/i18n/compile-frontend.mjs",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
     "format": "prettier --write src/ tests/",
@@ -42,7 +44,8 @@
     "tailwind-merge": "3.0.2",
     "tailwindcss-animate": "1.0.7",
     "vue": "3.5.13",
-    "vue-router": "4.5.0"
+    "vue-router": "4.5.0",
+    "vue3-gettext": "4.0.1"
   },
   "devDependencies": {
     "@tsconfig/node22": "22.0.0",

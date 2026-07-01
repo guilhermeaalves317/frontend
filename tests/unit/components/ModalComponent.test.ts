@@ -1,6 +1,14 @@
 import { mount, VueWrapper } from '@vue/test-utils'
+import { ref } from 'vue'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import ModalComponent from '@/components/ModalComponent.vue'
+
+vi.mock('vue3-gettext', () => ({
+  useGettext: () => ({
+    current: ref('en-us'),
+    $gettext: (msgid: string) => msgid,
+  }),
+}))
 
 const onClose = vi.fn()
 const onConfirm = vi.fn()
@@ -16,19 +24,7 @@ describe('ModalComponent', () => {
         onClose,
         onConfirm,
       },
-      global: {
-        provide: {
-          languageContext: {
-            getLanguage: (key: string) => {
-              const translations: Record<string, string> = {
-                'register.closeButton': 'Close',
-                'register.confirmButton': 'OK',
-              }
-              return translations[key] || key
-            },
-          },
-        },
-      },
+      global: {},
       slots: {
         default: 'Modal Content',
       },

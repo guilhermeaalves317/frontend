@@ -6,19 +6,10 @@ import { nextTick } from 'vue'
 import LandHoldersTable from '@/components/LandHoldersTableComponent.vue'
 import type { LandHoldersData } from '@/context/LandHoldersInformation'
 
-vi.mock('@/context/language/useLanguageContext', () => ({
-  useLanguageContext: () => ({
-    getLanguage: (key: string) => {
-      const translations: Record<string, string> = {
-        'register.landholdersInformation.table.header.legalPersonality': 'Legal personality',
-        'register.landholdersInformation.table.header.taxpayer': 'Taxpayer ID/Company ID',
-        'register.landholdersInformation.table.header.nameCompany': 'Name/Company',
-        'register.landholdersInformation.table.header.actions': 'Actions',
-        'register.landholdersInformation.table.emptyData': 'There is no data to show.',
-        'register.landholdersInformation.table.naturalPerson': 'Natural Person',
-      }
-      return translations[key] || key
-    },
+vi.mock('vue3-gettext', () => ({
+  useGettext: () => ({
+    current: ref('pt-br'),
+    $gettext: (msgid: string) => msgid,
   }),
 }))
 

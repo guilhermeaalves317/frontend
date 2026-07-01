@@ -1,21 +1,14 @@
 <script setup>
+import { translateLayerLabel } from '@/i18n/dynamicTranslations'
+import { useGettext } from 'vue3-gettext'
 import { computed, ref } from 'vue'
-import { useLanguageContext } from '@/context/language/useLanguageContext'
 import diffArea from '@/config/diff_area.json'
+const { $gettext } = useGettext()
 
 const mainLayer = ref(diffArea.layer_code)
 
-const { getLanguage } = useLanguageContext()
-
-const getLanguageText = (keyOrText, fallbackText) => {
-  if (!keyOrText) return fallbackText || ''
-  const translated = getLanguage(keyOrText)
-
-  if (translated === keyOrText && fallbackText && keyOrText !== fallbackText) {
-    return fallbackText
-  }
-  return translated
-}
+const getLanguageText = (keyOrText, fallbackText) =>
+  translateLayerLabel(keyOrText, fallbackText, $gettext)
 
 const props = defineProps({
   displayedAreas: {
@@ -47,7 +40,7 @@ const displayPanel = computed(() => props.displayedAreas.length)
 
 const areaText = (item) => {
   if (!item.vectorizedArea?.info[item?.rules.geometricUnit]?.value) {
-    return getLanguage('mapComponents.areasDisplayPanel.notApplicable')
+    return $gettext('N/A')
   }
 
   return item.vectorizedArea.info[item.rules.geometricUnit].formatted
@@ -74,7 +67,7 @@ const canEdit = (item) => {
     class="areas-panel w-full p-2 border border-[#ccc] rounded-lg shadow-md bg-[#f9f9f9] max-h-[40rem] overflow-y-auto mt-2"
   >
     <h4 class="text-md font-semibold mb-3">
-      {{ getLanguage('mapComponents.areasDisplayPanel.title') }}
+      {{ $gettext('Vectorized Areas') }}
     </h4>
     <ul class="space-y-2">
       <template v-for="item in displayedAreas" :key="item.layerCode">
@@ -88,8 +81,8 @@ const canEdit = (item) => {
               @click="handleToggleVisibility(item)"
               :title="
                 item.isVisible
-                  ? getLanguage('mapComponents.areasDisplayPanel.hideLayer')
-                  : getLanguage('mapComponents.areasDisplayPanel.showLayer')
+                  ? $gettext('Hide layer')
+                  : $gettext('Show layer')
               "
             >
               <i v-if="item.isVisible" class="fas fa-eye text-gray-600 hover:text-blue-600" />
@@ -100,7 +93,7 @@ const canEdit = (item) => {
               v-if="item.rules?.style?.color"
               class="color-swatch h-3 w-3 rounded-full inline-block mr-1 border border-gray-400"
               :style="{ backgroundColor: item.rules.style.color }"
-              :title="getLanguage('mapComponents.areasDisplayPanel.layerColorTitle')"
+              :title="$gettext('Layer color')"
             />
             <span class="text-sm font-medium">{{
               getLanguageText(item.displayNameKey, item.displayName)
@@ -113,7 +106,7 @@ const canEdit = (item) => {
                 v-if="!item.isApiDerived"
                 class="flex items-center justify-center w-full h-full"
                 @click="handleRequestEdit(item)"
-                :title="getLanguage('mapComponents.areasDisplayPanel.editLayer')"
+                :title="$gettext('Edit layer')"
               >
                 <i
                   v-if="!item.isVisible && !item.isEditing"
@@ -129,7 +122,7 @@ const canEdit = (item) => {
             <button
               v-if="canEdit(item)"
               @click="handleRequestDelete(item)"
-              :title="getLanguage('mapComponents.areasDisplayPanel.removeLayer')"
+              :title="$gettext('Remove layer')"
             >
               <i class="fas fa-trash text-gray-600 hover:text-red-600 text-xs" />
             </button>
@@ -144,8 +137,8 @@ const canEdit = (item) => {
               @click="handleToggleBufferVisibility(item)"
               :title="
                 item.vectorizedArea.buffer.isHidden
-                  ? getLanguage('mapComponents.areasDisplayPanel.showLayer')
-                  : getLanguage('mapComponents.areasDisplayPanel.hideLayer')
+                  ? $gettext('Show layer')
+                  : $gettext('Hide layer')
               "
             >
               <i
@@ -158,7 +151,7 @@ const canEdit = (item) => {
               v-if="item.rules?.buffer?.style?.color"
               class="color-swatch h-3 w-3 rounded-full inline-block mr-1 border border-gray-400"
               :style="{ backgroundColor: item.rules?.buffer?.style?.color }"
-              :title="getLanguage('mapComponents.areasDisplayPanel.layerColorTitle')"
+              :title="$gettext('Layer color')"
             />
             <span class="text-sm font-medium">{{
               getLanguageText(item.rules.buffer.displayNameKey, item.rules.buffer.displayName)

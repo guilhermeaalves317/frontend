@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { useGettext } from 'vue3-gettext'
 import { faDownload, faEye } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+const { $gettext } = useGettext()
 
-import { useLanguageContext } from '@/context/language/useLanguageContext'
 import type { Property } from '@/interfaces/Property'
 
 import { useRouter } from 'vue-router'
@@ -11,7 +12,6 @@ import axios from '@/services/axios'
 import { onMounted, ref } from 'vue'
 import { fetchReceipt } from '@/services/propertiesService'
 
-const { getLanguage } = useLanguageContext()
 const router = useRouter()
 
 const { code, id, imageUrl, municipality, propertyName, stateDistrict } = defineProps<Property>()
@@ -48,7 +48,7 @@ onMounted(async () => {
       <h1 class="text-lg font-bold p-3 truncate">{{ propertyName }}</h1>
     </div>
     <div class="mx-3 mt-2">
-      <strong class="text-[17px]">{{ getLanguage('properties.propertyCard.code') }}:</strong>
+      <strong class="text-[17px]">{{ $gettext('Code') }}:</strong>
       <p class="break-all">{{ code }}</p>
       <!-- <img src="/images/map_property_example.png" alt="Map example" width="380" height="230" /> -->
       <div class="h-[140px] flex">
@@ -60,10 +60,10 @@ onMounted(async () => {
         />
       </div>
       <p class="">
-        <strong>{{ getLanguage('properties.propertyCard.state') }}: </strong>{{ stateDistrict }}
+        <strong>{{ $gettext('State') }}: </strong>{{ stateDistrict }}
       </p>
       <p>
-        <strong>{{ getLanguage('properties.propertyCard.city') }}: </strong>{{ municipality }}
+        <strong>{{ $gettext('City') }}: </strong>{{ municipality }}
       </p>
       <hr class="mt-2 border-t-2 border-gray-300" />
       <div class="flex items-center justify-center pt-3">
@@ -73,7 +73,7 @@ onMounted(async () => {
         >
           <FontAwesomeIcon :icon="faEye" :style="{ marginRight: '0.5rem' }" />
           <p class="font-bold primary-color">
-            {{ getLanguage('properties.propertyCard.details') }}
+            {{ $gettext('Details') }}
           </p>
         </button>
         <div class="w-0.5 h-6 mx-5 bg-gray-300"></div>
@@ -103,7 +103,7 @@ onMounted(async () => {
             />
           </template>
           <p class="font-bold primary-color">
-            {{ getLanguage('properties.propertyCard.registration') }}
+            {{ $gettext('Receipt') }}
           </p>
         </button>
       </div>

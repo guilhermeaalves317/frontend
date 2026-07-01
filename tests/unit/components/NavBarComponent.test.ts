@@ -12,11 +12,17 @@ const router = createRouter({
 
 let wrapper: VueWrapper
 
-vi.mock('@/context/language/useLanguageContext', () => ({
-  useLanguageContext: () => ({
-    language: ref('pt-br'),
-    setLanguage: vi.fn(),
-    getLanguage: (key: string) => key,
+vi.mock('vue3-gettext', () => ({
+  useGettext: () => ({
+    current: ref('pt-br'),
+    $gettext: (msgid: string) => msgid,
+  }),
+}))
+vi.mock('@/i18n/useLocale', () => ({
+  useLocale: () => ({
+    locale: ref('pt-br'),
+    setLocale: vi.fn(),
+    $gettext: (msgid: string) => msgid,
   }),
 }))
 

@@ -1,28 +1,27 @@
 <script setup lang="ts">
+import { useGettext } from 'vue3-gettext'
 import CalendarComponent from '@/components/CalendarComponent.vue'
 import RadioButtonGroupComponent from '@/components/RadioButtonGroupComponent.vue'
 import TextInputComponent from '@/components/TextInputComponent.vue'
 import WholeWidthCardComponent from '@/components/WholeWidthCardComponent.vue'
-import { useLanguageContext } from '@/context/language/useLanguageContext'
 import { useFormContext } from '@/context/useFormContext'
 import { useValidatorContext } from '@/context/validators/useValidatorContext'
 import { computed, onMounted, watch } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
+const { $gettext } = useGettext()
 
 const { formData, validateRegistrationForm, representativeStatus } = useFormContext()
 const { validation, isRepresentativeRegistrarRequired } = useValidatorContext()
 const router = useRouter()
 
-const { getLanguage } = useLanguageContext()
-
 const representativeOptions = computed(() => [
-  { label: getLanguage('register.registrarDetails.form.options.one'), value: 'noRep' },
+  { label: $gettext('I do not have a representative'), value: 'noRep' },
   {
-    label: getLanguage('register.registrarDetails.form.options.two'),
+    label: $gettext('I have a representative and he/she is the registrar'),
     value: 'hasRepInReg',
   },
   {
-    label: getLanguage('register.registrarDetails.form.options.three'),
+    label: $gettext('I have a representative and he/she is not the registrar'),
     value: 'hasRepNotInReg',
   },
 ])
@@ -70,7 +69,7 @@ const handleNextButton = async () => {
     ) {
       validateRegistrationForm.isRegistrarDetailsValid = false
       window.alert(
-        getLanguage('register.registrarDetails.registrarMustBeDifferentFromRepresentative'),
+        $gettext('Registrar must be different from Representative'),
       )
       return
     }
@@ -157,20 +156,20 @@ onMounted(() => {
 
 <template>
   <WholeWidthCardComponent bg-color="rgb(243,252,248)">
-    <h3 class="text-lg font-bold">{{ getLanguage('register.registrarDetails.card') }}</h3>
+    <h3 class="text-lg font-bold">{{ $gettext('REGISTRAR\'S DETAILS') }}</h3>
     <p>
-      {{ getLanguage('register.registrarDetails.cardSubtitle') }}
+      {{ $gettext('Fill in the information of the person responsible for doing the register (landholder, technical assistant, government officer, others).') }}
     </p>
   </WholeWidthCardComponent>
 
   <WholeWidthCardComponent bg-color="rgb(249,250,249)">
-    <h3 class="text-base">{{ getLanguage('register.registrarDetails.data') }}</h3>
+    <h3 class="text-base">{{ $gettext('Data') }}</h3>
     <div class="flex space-x-4">
       <TextInputComponent
         :label="
-          getLanguage('register.registrarDetails.form.id') +
+          $gettext('Personal ID') +
           ' ' +
-          getLanguage('register.registrarDetails.form.required')
+          $gettext('(Required)')
         "
         id="id"
         v-model="formData.registrarDetails.id"
@@ -178,7 +177,7 @@ onMounted(() => {
       />
       <CalendarComponent
         :label="
-          getLanguage('register.registrarDetails.form.dateOfBirth')
+          $gettext('Date of birth')
         "
         id="dob"
         v-model="formData.registrarDetails.dateOfBirth"
@@ -188,9 +187,9 @@ onMounted(() => {
     <div class="flex space-x-4">
       <TextInputComponent
         :label="
-          getLanguage('register.registrarDetails.form.name') +
+          $gettext('Name') +
           ' ' +
-          getLanguage('register.registrarDetails.form.required')
+          $gettext('(Required)')
         "
         id="name"
         v-model="formData.registrarDetails.name"
@@ -198,9 +197,9 @@ onMounted(() => {
       />
       <TextInputComponent
         :label="
-          getLanguage('register.registrarDetails.form.mothersName') +
+          $gettext('Mother\'s name') +
           ' ' +
-          getLanguage('register.registrarDetails.form.required')
+          $gettext('(Required)')
         "
         id="mothers_name"
         v-model="formData.registrarDetails.mothersName"
@@ -210,9 +209,9 @@ onMounted(() => {
   </WholeWidthCardComponent>
 
   <WholeWidthCardComponent bg-color="rgb(249,250,249)">
-    <h3 class="text-lg">{{ getLanguage('register.registrarDetails.representativeData') }}</h3>
+    <h3 class="text-lg">{{ $gettext('Representative Data') }}</h3>
     <p>
-      {{ getLanguage('register.registrarDetails.representativeDataSubtitle') }}
+      {{ $gettext('Representative: In the Rural Environmental Registry (RER), the representative is an individual authorized by the property owner or landholder to act on their behalf at all stages of the registration process.') }}
     </p>
     <RadioButtonGroupComponent
       :options="representativeOptions"
@@ -224,11 +223,11 @@ onMounted(() => {
   </WholeWidthCardComponent>
 
   <WholeWidthCardComponent v-if="showRepresentativeData" bg-color="rgb(249,250,249)">
-    <h3 class="text-base">{{ getLanguage('register.registrarDetails.representativeData') }}</h3>
+    <h3 class="text-base">{{ $gettext('Representative Data') }}</h3>
 
     <div class="flex space-x-4">
       <TextInputComponent
-        :label="'Id ' + getLanguage('register.registrarDetails.form.required')"
+        :label="'Id ' + $gettext('(Required)')"
         id="rep_id"
         v-model="formData.registrarDetails.representative!.id"
         :errors="validation.registrarDetails.representative.id.$errors"
@@ -236,9 +235,9 @@ onMounted(() => {
       <CalendarComponent
         id="rep_dob"
         :label="
-          getLanguage('register.registrarDetails.form.dateOfBirth') +
+          $gettext('Date of birth') +
           ' ' +
-          getLanguage('register.registrarDetails.form.required')
+          $gettext('(Required)')
         "
         v-model="formData.registrarDetails.representative!.dateOfBirth"
         :errors="validation.registrarDetails.representative.dateOfBirth.$errors"
@@ -248,9 +247,9 @@ onMounted(() => {
     <div class="flex space-x-4">
       <TextInputComponent
         :label="
-          getLanguage('register.registrarDetails.form.name') +
+          $gettext('Name') +
           ' ' +
-          getLanguage('register.registrarDetails.form.required')
+          $gettext('(Required)')
         "
         id="rep_name"
         v-model="formData.registrarDetails.representative!.name"
@@ -258,9 +257,9 @@ onMounted(() => {
       />
       <TextInputComponent
         :label="
-          getLanguage('register.registrarDetails.form.mothersName') +
+          $gettext('Mother\'s name') +
           ' ' +
-          getLanguage('register.registrarDetails.form.required')
+          $gettext('(Required)')
         "
         id="rep_mothers_name"
         v-model="formData.registrarDetails.representative!.mothersName"
@@ -271,10 +270,10 @@ onMounted(() => {
 
   <div class="mx-3 flex justify-between">
     <RouterLink class="br-button secondary mr-3" to="/register/property_map">
-      {{ getLanguage('register.previousButton') }}
+      {{ $gettext('Previous') }}
     </RouterLink>
     <button class="br-button primary" @click="handleNextButton">
-      {{ getLanguage('register.nextButton') }}
+      {{ $gettext('Next') }}
     </button>
   </div>
 </template>

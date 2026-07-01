@@ -1,8 +1,16 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { mount, VueWrapper } from '@vue/test-utils'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { ref } from 'vue'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import LandDocumentsTableComponent from '@/components/LandDocumentsTableComponent.vue'
+
+vi.mock('vue3-gettext', () => ({
+  useGettext: () => ({
+    current: ref('en-us'),
+    $gettext: (msgid: string) => msgid,
+  }),
+}))
 
 describe('LandDocumentsTableComponent', () => {
   const mockData = [
@@ -28,21 +36,6 @@ describe('LandDocumentsTableComponent', () => {
         propertyRightsData: mockData,
       },
       global: {
-        provide: {
-          languageContext: {
-            getLanguage: (key: string) => {
-              const translations: Record<string, string> = {
-                'register.propertyRights.list.type.title': 'Type',
-                'register.propertyRights.list.titleDeedOrLandDocument': 'Title deed/ Land Document',
-                'register.propertyRights.list.stateAndCityOfTheNotaryOffice':
-                  'State and City of the Notary Office',
-                'register.propertyRights.list.actions': 'Actions',
-                'register.propertyRights.list.noDataToShow': 'There is no data to show.',
-              }
-              return translations[key] || key
-            },
-          },
-        },
         components: {
           FontAwesomeIcon,
         },

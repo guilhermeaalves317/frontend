@@ -13,7 +13,14 @@ MAP_ZOOM=$(grep 'zoom:' "$CONSTANTS_PATH" | sed -E 's/.*zoom:\s*([0-9]+).*/\1/' 
 
 ROOT_DIR=$(dirname "$(dirname "$(realpath "$0")")")
 PACKAGE_JSON="$ROOT_DIR/package.json"
-LANGUAGES_JSON="$ROOT_DIR/src/config/languages.json"
+LINGUAS_FILE="$ROOT_DIR/../locale/LINGUAS"
+DEFAULT_LANGUAGE=$(head -n 1 "$LINGUAS_FILE" 2>/dev/null | tr -d '\r\n')
+if [ -z "$DEFAULT_LANGUAGE" ]; then
+  DEFAULT_LANGUAGE="en-us"
+fi
+
+MAP_LAYERS_PATH="$ROOT_DIR/node_modules/@rural-environmental-registry/map_component/src/assets/layers/mapLayers.json"
+
 DIFFS_AREA_JSON="$ROOT_DIR/src/config/diff_area.json"
 DIST_DIR="$ROOT_DIR/dist"
 CONFIG_JSON="$DIST_DIR/config.json"
@@ -22,10 +29,6 @@ mkdir -p "$DIST_DIR"
 
 PACKAGE_NAME=$(jq -r '.name' "$PACKAGE_JSON")
 PACKAGE_VERSION=$(jq -r '.version' "$PACKAGE_JSON")
-
-DEFAULT_LANGUAGE=$(jq -r '.defaultlanguage // "en-us"' "$LANGUAGES_JSON")
-
-MAP_LAYERS_PATH="$ROOT_DIR/node_modules/@rural-environmental-registry/map_component/src/assets/layers/mapLayers.json"
 
 if [ -f "$MAP_LAYERS_PATH" ]; then
   CAMADAS_MAPA=$(jq -c '.mapLayers' "$MAP_LAYERS_PATH")

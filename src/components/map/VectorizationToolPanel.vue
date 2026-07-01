@@ -1,9 +1,8 @@
 <script setup>
+import { translateLayerLabel } from '@/i18n/dynamicTranslations'
+import { useGettext } from 'vue3-gettext'
 import { ref, computed, onMounted } from 'vue'
-import { useLanguageContext } from '@/context/language/useLanguageContext'
-
-const { getLanguage } = useLanguageContext()
-
+const { $gettext } = useGettext()
 const emit = defineEmits(['vectorizationLayerSelected'])
 
 const props = defineProps({
@@ -51,16 +50,8 @@ const getClasses = (groupKey) => {
   }
 }
 
-const getLanguageText = (keyOrText, fallbackText) => {
-  const textToUse = keyOrText || fallbackText
-  if (!textToUse) return ''
-
-  if (textToUse.includes('.')) {
-    const translated = getLanguage(textToUse)
-    return translated === textToUse ? fallbackText || textToUse : translated
-  }
-  return textToUse
-}
+const getLanguageText = (keyOrText, fallbackText) =>
+  translateLayerLabel(keyOrText, fallbackText, $gettext)
 
 const toggleGroup = (groupKeyToToggle) => {
   const { key, open } = selectionState.value.group
@@ -93,7 +84,7 @@ const getLayerStates = (layer) => {
   const isDisabled = !layer.rules.maxInstances ? false : count >= layer.rules.maxInstances
   const isSelected = selectionState.value.layer.key === layer.layerCode
 
-  const disabledTitle = getLanguage('mapComponents.vectorizationToolPanel.limitReached')
+  const disabledTitle = $gettext('Limit reached ({current}/{max}) - {layerName}')
     .replace('{current}', count.toString())
     .replace('{max}', layer.maxInstances?.toString() || '0')
     .replace('{layerName}', getLanguageText(layer.displayNameKey, layer.displayName))
@@ -174,7 +165,7 @@ defineExpose({
       </button>
     </div>
     <p v-else class="text-sm text-gray-600 text-center my-4">
-      {{ getLanguage('mapComponents.vectorizationToolPanel.noLayerGroupsConfigured') }}
+      {{ $gettext('No layer groups configured.') }}
     </p>
     <div
       v-if="selectionState.group.open"
@@ -250,11 +241,11 @@ defineExpose({
         </li>
       </ul>
       <p v-else class="text-sm text-gray-500">
-        {{ getLanguage('mapComponents.vectorizationToolPanel.noLayersInGroup') }}
+        {{ $gettext('No layers available in this group.') }}
       </p>
     </div>
     <p v-if="selectionState.group.open" class="mt-3 text-sm text-gray-600 text-center">
-      {{ getLanguage('mapComponents.vectorizationToolPanel.selectLayerFromGroup') }}
+      {{ $gettext('Please select a layer from the group above.') }}
     </p>
   </div>
 </template>

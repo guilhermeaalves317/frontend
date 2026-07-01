@@ -1,25 +1,24 @@
 <script setup lang="ts">
+import { useGettext } from 'vue3-gettext'
 import RadioButtonGroupComponent from '@/components/RadioButtonGroupComponent.vue'
 import SelectInputComponent from '@/components/SelectInputComponent.vue'
 import TextAreaComponent from '@/components/TextAreaComponent.vue'
 import TextInputComponent from '@/components/TextInputComponent.vue'
 import WholeWidthCardComponent from '@/components/WholeWidthCardComponent.vue'
-import { useLanguageContext } from '@/context/language/useLanguageContext'
 import { useFormContext } from '@/context/useFormContext'
 import { useValidatorContext } from '@/context/validators/useValidatorContext'
 import { computed, ref, watch } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import States from '../../config/states_municipalities.json'
+const { $gettext } = useGettext()
 
 const { formData, validateRegistrationForm } = useFormContext()
 const { validation } = useValidatorContext()
-const { getLanguage } = useLanguageContext()
-
 const router = useRouter()
 
 const locationZonevOptions = computed(() => [
-  { label: getLanguage('register.ruralProperty.form.locationZonevOption.urban'), value: 'urban' },
-  { label: getLanguage('register.ruralProperty.form.locationZonevOption.rural'), value: 'rural' },
+  { label: $gettext('Urban'), value: 'urban' },
+  { label: $gettext('Rural'), value: 'rural' },
 ])
 
 const handleNextButton = async () => {
@@ -73,14 +72,14 @@ watch(
 
 <template>
   <WholeWidthCardComponent bg-color="#f0fcf7">
-    <h1 class="text-lg font-bold">{{ getLanguage('register.ruralProperty.card') }}</h1>
-    <p>{{ getLanguage('register.ruralProperty.cardSubtitle') }}</p>
+    <h1 class="text-lg font-bold">{{ $gettext('RURAL PROPERTY') }}</h1>
+    <p>{{ $gettext('Fill in the information of the rural property.') }}</p>
   </WholeWidthCardComponent>
 
   <WholeWidthCardComponent bg-color="#F8FAF9">
     <div class="flex flex-col space-y-4">
       <TextInputComponent
-        :label="getLanguage('register.ruralProperty.form.propertyName')"
+        :label="$gettext('Property Name')"
         id="property-name"
         v-model="formData.ruralProperties.propertyName"
         :errors="validation.ruralProperties.propertyName.$errors"
@@ -89,8 +88,8 @@ watch(
       <div class="flex flex-row space-x-4">
         <SelectInputComponent
           id="state"
-          :placeholder="getLanguage('register.ruralProperty.form.statePlaceHolder')"
-          :label="getLanguage('register.ruralProperty.form.state')"
+          :placeholder="$gettext('Select the state')"
+          :label="$gettext('State')"
           :items="states"
           width="250px"
           v-model="formData.ruralProperties.state"
@@ -98,8 +97,8 @@ watch(
         />
         <SelectInputComponent
           id="city"
-          :placeholder="getLanguage('register.ruralProperty.form.cityPlaceHolder')"
-          :label="getLanguage('register.ruralProperty.form.city')"
+          :placeholder="$gettext('Select the city')"
+          :label="$gettext('City')"
           :items="ruralPropertiesCities"
           :disabled="!selectedRuralPropertyState"
           width="250px"
@@ -107,14 +106,14 @@ watch(
           :errors="validation.ruralProperties.city.$errors"
         />
         <TextInputComponent
-          :label="getLanguage('register.ruralProperty.form.zipCode')"
+          :label="$gettext('Zip Code')"
           id="zip-code"
           v-model="formData.ruralProperties.zipCode"
           :errors="validation.ruralProperties.zipCode.$errors"
         />
         <RadioButtonGroupComponent
           name="locationZonev"
-          :groupLabel="getLanguage('register.ruralProperty.form.locationZonev')"
+          :groupLabel="$gettext('Location Zone (Optional)')"
           :options="locationZonevOptions"
           :vertical-alignment="false"
           :show-divider="true"
@@ -124,10 +123,10 @@ watch(
 
       <div class="flex flex-row w-full">
         <TextAreaComponent
-          :label="getLanguage('register.ruralProperty.form.descriptionOfPropertyAcess')"
+          :label="$gettext('Description of Property Access (Optional)')"
           id="propertyAccessDescription"
           :tooltip-text="
-            getLanguage('register.ruralProperty.form.descriptionOfPropertyAcessTooltip')
+            $gettext('Provide details about how the property can be accessed, such as roads, landmarks, or specific directions. This field is optional.')
           "
           v-model="formData.ruralProperties.propertyAccessDescription"
         />
@@ -138,11 +137,11 @@ watch(
   <WholeWidthCardComponent bg-color="#F8FAF9">
     <div class="flex flex-col space-y-4">
       <h1 class="text-lg font-bold">
-        {{ getLanguage('register.ruralProperty.cardMailingAddress') }}
+        {{ $gettext('Mailing Address') }}
       </h1>
       <div class="flex flex-row space-x-4 flex-grow">
         <TextInputComponent
-          :label="getLanguage('register.ruralProperty.formMailingAddress.recipientName')"
+          :label="$gettext('Recipient Name')"
           id="recipient-name"
           v-model="formData.ruralProperties.mailingAddress.recipientName"
           :errors="validation.ruralProperties.mailingAddress.recipientName.$errors"
@@ -151,10 +150,10 @@ watch(
       <div class="flex flex-row space-x-4">
         <div class="flex flex-grow">
           <TextInputComponent
-            :label="getLanguage('register.ruralProperty.formMailingAddress.addressStreet')"
+            :label="$gettext('Address/Street')"
             id="mailing-address-street"
             :tooltip-text="
-              getLanguage('register.ruralProperty.formMailingAddress.addressStreetTooltip')
+              $gettext('Enter the official address or street name where the property is located.')
             "
             v-model="formData.ruralProperties.mailingAddress.addressStreet"
             classes="w-full"
@@ -163,7 +162,7 @@ watch(
         </div>
         <div class="flex flex-grow-0">
           <TextInputComponent
-            :label="getLanguage('register.ruralProperty.formMailingAddress.number')"
+            :label="$gettext('Number')"
             id="number"
             v-model="formData.ruralProperties.mailingAddress.number"
             :errors="validation.ruralProperties.mailingAddress.number.$errors"
@@ -172,7 +171,7 @@ watch(
 
         <div class="flex flex-grow">
           <TextInputComponent
-            :label="getLanguage('register.ruralProperty.formMailingAddress.additionalInformation')"
+            :label="$gettext('Additional Information (Optional)')"
             id="mailing-additional-information"
             v-model="formData.ruralProperties.mailingAddress.additionalInformation"
             classes="w-full"
@@ -181,21 +180,21 @@ watch(
       </div>
       <div class="flex flex-row space-x-4 w-full">
         <TextInputComponent
-          :label="getLanguage('register.ruralProperty.formMailingAddress.neighborhood')"
+          :label="$gettext('Neighborhood')"
           id="mailing-neighborhood"
           v-model="formData.ruralProperties.mailingAddress.neighborhood"
           :errors="validation.ruralProperties.mailingAddress.neighborhood.$errors"
         />
         <TextInputComponent
-          :label="getLanguage('register.ruralProperty.formMailingAddress.zipCode')"
+          :label="$gettext('Zip Code')"
           id="mailing-zip-code"
           v-model="formData.ruralProperties.mailingAddress.zipCode"
           :errors="validation.ruralProperties.mailingAddress.zipCode.$errors"
         />
         <SelectInputComponent
           id="mailing-state"
-          :placeholder="getLanguage('register.ruralProperty.formMailingAddress.statePlaceHolder')"
-          :label="getLanguage('register.ruralProperty.formMailingAddress.state')"
+          :placeholder="$gettext('Select the state')"
+          :label="$gettext('State')"
           width="250px"
           v-model="formData.ruralProperties.mailingAddress.state"
           :items="states"
@@ -203,8 +202,8 @@ watch(
         />
         <SelectInputComponent
           id="mailing-city"
-          :placeholder="getLanguage('register.ruralProperty.formMailingAddress.cityPlaceHolder')"
-          :label="getLanguage('register.ruralProperty.formMailingAddress.city')"
+          :placeholder="$gettext('Select the city')"
+          :label="$gettext('City')"
           width="250px"
           :items="ruralPropertiesMailingCities"
           v-model="formData.ruralProperties.mailingAddress.city"
@@ -214,12 +213,12 @@ watch(
       </div>
       <div class="flex flex-row space-x-4">
         <TextInputComponent
-          :label="getLanguage('register.ruralProperty.formMailingAddress.email')"
+          :label="$gettext('E-mail (Optional)')"
           id="mailing-email"
           v-model="formData.ruralProperties.mailingAddress.email"
         />
         <TextInputComponent
-          :label="getLanguage('register.ruralProperty.formMailingAddress.contactNumber')"
+          :label="$gettext('Contact Number (Optional)')"
           id="mailing-telephone"
           type="tel"
           v-model="formData.ruralProperties.mailingAddress.telephone"
@@ -230,10 +229,10 @@ watch(
 
   <div class="flex justify-between space-x-4 mt-4 mb-10 mx-3">
     <RouterLink class="br-button secondary" to="/register/landholders_information">
-      {{ getLanguage('register.previousButton') }}
+      {{ $gettext('Previous') }}
     </RouterLink>
     <button class="br-button primary" @click="handleNextButton">
-      {{ getLanguage('register.nextButton') }}
+      {{ $gettext('Next') }}
     </button>
   </div>
 </template>

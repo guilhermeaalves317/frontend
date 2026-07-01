@@ -1,4 +1,5 @@
 import type { Validation } from '@vuelidate/core'
+import type { Language } from 'vue3-gettext'
 import type { Ref } from 'vue'
 
 export interface InvalidFieldDetail {
@@ -9,81 +10,69 @@ export interface InvalidFieldDetail {
 export interface ValidationHelperOptions {
   validation: Ref<Validation>
   formData: any
-  getLanguage: (key: string) => string
+  $gettext: Language["$gettext"]
 }
 
 export class ValidationHelper {
   private validation: Ref<Validation>
   private formData: any
-  private getLanguage: (key: string) => string
+  private $gettext: Language["$gettext"]
 
   constructor(options: ValidationHelperOptions) {
     this.validation = options.validation
     this.formData = options.formData
-    this.getLanguage = options.getLanguage
+    this.$gettext = options.$gettext
   }
 
   private getFieldDisplayName(fieldKey: string, stepContext: string): string {
     const fieldMappings: { [key: string]: { [field: string]: string } } = {
       registrarDetails: {
-        id: this.getLanguage('register.registrarDetails.form.id'),
-        dateOfBirth: this.getLanguage('register.registrarDetails.form.dateOfBirth'),
-        name: this.getLanguage('register.registrarDetails.form.name'),
-        mothersName: this.getLanguage('register.registrarDetails.form.mothersName'),
-        'representative.id': `${this.getLanguage('register.registrarDetails.representativeData')} - ${this.getLanguage('register.registrarDetails.form.id')}`,
-        'representative.dateOfBirth': `${this.getLanguage('register.registrarDetails.representativeData')} - ${this.getLanguage('register.registrarDetails.form.dateOfBirth')}`,
-        'representative.name': `${this.getLanguage('register.registrarDetails.representativeData')} - ${this.getLanguage('register.registrarDetails.form.name')}`,
-        'representative.mothersName': `${this.getLanguage('register.registrarDetails.representativeData')} - ${this.getLanguage('register.registrarDetails.form.mothersName')}`,
+        id: this.$gettext('Personal ID'),
+        dateOfBirth: this.$gettext('Date of birth'),
+        name: this.$gettext('Name'),
+        mothersName: this.$gettext('Mother\'s name'),
+        'representative.id': `${this.$gettext('Representative Data')} - ${this.$gettext('Personal ID')}`,
+        'representative.dateOfBirth': `${this.$gettext('Representative Data')} - ${this.$gettext('Date of birth')}`,
+        'representative.name': `${this.$gettext('Representative Data')} - ${this.$gettext('Name')}`,
+        'representative.mothersName': `${this.$gettext('Representative Data')} - ${this.$gettext('Mother\'s name')}`,
       },
       landHoldersInformation: {
-        id: this.getLanguage('register.landholdersInformation.form.id'),
-        dateOfBirth: this.getLanguage('register.landholdersInformation.form.dateOfBirth'),
-        name: this.getLanguage('register.landholdersInformation.form.name'),
-        mothersName: this.getLanguage('register.landholdersInformation.form.mothersName'),
-        legalPersonality: this.getLanguage(
-          'register.landholdersInformation.form.landholderLegalPersonality.label',
-        ),
-        wayToAddLandholdersInformation: this.getLanguage(
-          'register.landholdersInformation.form.chooseLandholderInfoMethod.label',
+        id: this.$gettext('Personal ID'),
+        dateOfBirth: this.$gettext('Date of birth'),
+        name: this.$gettext('Name'),
+        mothersName: this.$gettext('Mother\'s name'),
+        legalPersonality: this.$gettext('Legal personality of landholder'),
+        wayToAddLandholdersInformation: this.$gettext(
+          "Choose a way to add landholder's information",
         ),
       },
       ruralProperties: {
-        propertyName: this.getLanguage('register.ruralProperty.form.propertyName'),
-        state: this.getLanguage('register.ruralProperty.form.state'),
-        city: this.getLanguage('register.ruralProperty.form.city'),
-        zipCode: this.getLanguage('register.ruralProperty.form.zipCode'),
-        'mailingAddress.recipientName': `${this.getLanguage('register.ruralProperty.cardMailingAddress')} - ${this.getLanguage('register.ruralProperty.formMailingAddress.recipientName')}`,
-        'mailingAddress.addressStreet': `${this.getLanguage('register.ruralProperty.cardMailingAddress')} - ${this.getLanguage('register.ruralProperty.formMailingAddress.addressStreet')}`,
-        'mailingAddress.number': `${this.getLanguage('register.ruralProperty.cardMailingAddress')} - ${this.getLanguage('register.ruralProperty.formMailingAddress.number')}`,
-        'mailingAddress.neighborhood': `${this.getLanguage('register.ruralProperty.cardMailingAddress')} - ${this.getLanguage('register.ruralProperty.formMailingAddress.neighborhood')}`,
-        'mailingAddress.zipCode': `${this.getLanguage('register.ruralProperty.cardMailingAddress')} - ${this.getLanguage('register.ruralProperty.formMailingAddress.zipCode')}`,
-        'mailingAddress.state': `${this.getLanguage('register.ruralProperty.cardMailingAddress')} - ${this.getLanguage('register.ruralProperty.formMailingAddress.state')}`,
-        'mailingAddress.city': `${this.getLanguage('register.ruralProperty.cardMailingAddress')} - ${this.getLanguage('register.ruralProperty.formMailingAddress.city')}`,
+        propertyName: this.$gettext('Property Name'),
+        state: this.$gettext('State'),
+        city: this.$gettext('City'),
+        zipCode: this.$gettext('Zip Code'),
+        'mailingAddress.recipientName': `${this.$gettext('Mailing Address')} - ${this.$gettext('Recipient Name')}`,
+        'mailingAddress.addressStreet': `${this.$gettext('Mailing Address')} - ${this.$gettext('Address/Street')}`,
+        'mailingAddress.number': `${this.$gettext('Mailing Address')} - ${this.$gettext('Number')}`,
+        'mailingAddress.neighborhood': `${this.$gettext('Mailing Address')} - ${this.$gettext('Neighborhood')}`,
+        'mailingAddress.zipCode': `${this.$gettext('Mailing Address')} - ${this.$gettext('Zip Code')}`,
+        'mailingAddress.state': `${this.$gettext('Mailing Address')} - ${this.$gettext('State')}`,
+        'mailingAddress.city': `${this.$gettext('Mailing Address')} - ${this.$gettext('City')}`,
       },
       propertyRights: {
-        propertyLandholding: this.getLanguage('register.propertyRights.form.propertyOrLandholding'),
-        registeredPropertyName: this.getLanguage(
-          'register.propertyRights.form.registeredPropertyName',
-        ),
-        area: this.getLanguage('register.propertyRights.form.area'),
-        documentType: this.getLanguage('register.propertyRights.form.documentType'),
-        titleDeedLandDocument: this.getLanguage(
-          'register.propertyRights.form.titleDeedOrLandDocument',
-        ),
-        documentDate: this.getLanguage('register.propertyRights.form.documentDate'),
-        book: this.getLanguage('register.propertyRights.form.book'),
-        page: this.getLanguage('register.propertyRights.form.page'),
-        stateOfTheNotaryOffice: this.getLanguage(
-          'register.propertyRights.form.stateOfTheNotaryOffice',
-        ),
-        cityOfTheNotaryOffice: this.getLanguage(
-          'register.propertyRights.form.cityOfTheNotaryOffice',
-        ),
-        propertyCertification: this.getLanguage(
-          'register.propertyRights.form.propertyCertification',
-        ),
-        nationalRuralPropertyRegistrationNumber: this.getLanguage(
-          'register.propertyRights.form.nationalRuralPropertyRegistrationNumber',
+        propertyLandholding: this.$gettext('Property or Landholding'),
+        registeredPropertyName: this.$gettext('Registered Property Name'),
+        area: this.$gettext('Area'),
+        documentType: this.$gettext('Document Type'),
+        titleDeedLandDocument: this.$gettext('Title deed/ Land Document'),
+        documentDate: this.$gettext('Document Date'),
+        book: this.$gettext('Book'),
+        page: this.$gettext('Page'),
+        stateOfTheNotaryOffice: this.$gettext('State of The Notary Office'),
+        cityOfTheNotaryOffice: this.$gettext('City of The Notary Office'),
+        propertyCertification: this.$gettext('Property Certification'),
+        nationalRuralPropertyRegistrationNumber: this.$gettext(
+          'National Rural Property Registration Number',
         ),
       },
     }
@@ -116,7 +105,7 @@ export class ValidationHelper {
         .flat()
 
       if (fields.length > 0) {
-        invalidFields.push({ step: this.getLanguage('register.registrarDetails.card'), fields })
+        invalidFields.push({ step: this.$gettext('REGISTRAR\'S DETAILS'), fields })
       }
     }
 
@@ -130,7 +119,7 @@ export class ValidationHelper {
 
       if (fields.length > 0) {
         invalidFields.push({
-          step: this.getLanguage('register.landholdersInformation.card'),
+          step: this.$gettext('LANDHOLDERS INFORMATION'),
           fields,
         })
       }
@@ -158,7 +147,7 @@ export class ValidationHelper {
         .flat()
 
       if (fields.length > 0) {
-        invalidFields.push({ step: this.getLanguage('register.ruralProperty.card'), fields })
+        invalidFields.push({ step: this.$gettext('RURAL PROPERTY'), fields })
       }
     }
 
@@ -169,7 +158,7 @@ export class ValidationHelper {
         .map((key) => this.getFieldDisplayName(key, 'propertyRights'))
 
       if (fields.length > 0) {
-        invalidFields.push({ step: this.getLanguage('register.propertyRights.card'), fields })
+        invalidFields.push({ step: this.$gettext('OWNER DETAILS AND DOCUMENTATION.'), fields })
       }
     }
 
@@ -179,8 +168,8 @@ export class ValidationHelper {
       this.formData.landHoldersInformation.landHoldersData.length === 0
     ) {
       invalidFields.push({
-        step: this.getLanguage('register.landholdersInformation.card'),
-        fields: [this.getLanguage('register.landholdersInformation.warningModal')],
+        step: this.$gettext('LANDHOLDERS INFORMATION'),
+        fields: [this.$gettext('Please add at least one landholder.')],
       })
     }
 
@@ -190,8 +179,8 @@ export class ValidationHelper {
       this.formData.propertyRights.propertyRightsData.length === 0
     ) {
       invalidFields.push({
-        step: this.getLanguage('register.propertyRights.card'),
-        fields: [this.getLanguage('register.propertyRights.invalidForm')],
+        step: this.$gettext('OWNER DETAILS AND DOCUMENTATION.'),
+        fields: [this.$gettext('Please add at least one Land Document')],
       })
     }
 
@@ -202,14 +191,14 @@ export class ValidationHelper {
     if (invalidFields.length === 0) return ''
 
     let detailedMessage =
-      this.getLanguage('register.propertyRights.validationError.header') + '\n\n'
+      this.$gettext('There are required fields that need to be filled before submitting:') + '\n\n'
 
     invalidFields.forEach((stepInfo) => {
-      detailedMessage += `${this.getLanguage('register.propertyRights.validationError.step')}: ${stepInfo.step}\n`
-      detailedMessage += `${this.getLanguage('register.propertyRights.validationError.fields')}: ${stepInfo.fields.join(', ')}\n\n`
+      detailedMessage += `${this.$gettext('Step')}: ${stepInfo.step}\n`
+      detailedMessage += `${this.$gettext('Required fields')}: ${stepInfo.fields.join(', ')}\n\n`
     })
 
-    detailedMessage += this.getLanguage('register.propertyRights.validationError.instruction')
+    detailedMessage += this.$gettext('Please go back to the previous steps and fill in all required fields before proceeding.')
 
     return detailedMessage
   }

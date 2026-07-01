@@ -1,29 +1,27 @@
 <script setup lang="ts">
+import { useGettext } from 'vue3-gettext'
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import WholeWidthCardComponent from './WholeWidthCardComponent.vue'
 import { useFormContext } from '@/context/useFormContext'
+const { $gettext } = useGettext()
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { useLanguageContext } from '@/context/language/useLanguageContext'
-
 const { validateRegistrationForm } = useFormContext()
 
 const route = useRoute()
 const router = useRouter()
 const pathName = computed(() => route.path)
 
-const { getLanguage } = useLanguageContext()
-
 const steps = computed(() => [
-  { key: 'property_map', Title: getLanguage('register.steps.propertyMap') },
-  { key: 'registrars_details', Title: getLanguage('register.steps.registrarDetails') },
-  { key: 'landholders_information', Title: getLanguage('register.steps.landholdersInformation') },
-  { key: 'rural_property', Title: getLanguage('register.steps.ruralProperties') },
-  { key: 'property_rights', Title: getLanguage('register.steps.propertyRights') },
+  { key: 'property_map', Title: $gettext('Property map') },
+  { key: 'registrars_details', Title: $gettext('Registrar\'s details') },
+  { key: 'landholders_information', Title: $gettext('Landholder\'s information') },
+  { key: 'rural_property', Title: $gettext('Rural properties') },
+  { key: 'property_rights', Title: $gettext('Property rights') },
 ])
 
 const pathArray = computed(() => pathName.value.split('/'))
@@ -67,7 +65,7 @@ const handleStepClick = (stepRoute: string) => {
 <template>
   <WholeWidthCardComponent bg-color="#fdfaef">
     <div class="flex flex-col space-y-4 w-full h-24">
-      <h1 class="text-2xl font-semibold text-green-600">{{ getLanguage('register.step') }}</h1>
+      <h1 class="text-2xl font-semibold text-green-600">{{ $gettext('Step') }}</h1>
       <div class="flex flex-col items-center space-y-2 min-w-[70%]">
         <div class="flex items-center justify-center px-6 relative w-full">
           <div

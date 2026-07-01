@@ -1,22 +1,13 @@
 import { mount, VueWrapper } from '@vue/test-utils'
+import { ref } from 'vue'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import StepperComponent from '@/components/StepperComponent.vue'
 
-vi.mock('@/context/language/useLanguageContext', () => ({
-  useLanguageContext: () => ({
-    getLanguage: (key: string) => {
-      const translations: Record<string, string> = {
-        'register.steps.propertyMap': 'Property map',
-        'register.steps.registrarDetails': "Registrar's details",
-        'register.steps.landholdersInformation': "Landholder's information",
-        'register.steps.ruralProperties': 'Rural properties',
-        'register.steps.propertyRights': 'Property rights',
-        'register.step': 'Step',
-      }
-      return translations[key] || key
-    },
-    language: 'en-us',
+vi.mock('vue3-gettext', () => ({
+  useGettext: () => ({
+    current: ref('pt-br'),
+    $gettext: (msgid: string) => msgid,
   }),
 }))
 

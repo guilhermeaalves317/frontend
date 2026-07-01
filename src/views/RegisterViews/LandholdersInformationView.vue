@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGettext } from 'vue3-gettext'
 import CalendarComponent from '@/components/CalendarComponent.vue'
 import LandHoldersTableComponent from '@/components/LandHoldersTableComponent.vue'
 import ModalComponent from '@/components/ModalComponent.vue'
@@ -8,37 +9,31 @@ import WholeWidthCardComponent from '@/components/WholeWidthCardComponent.vue'
 import { type LandHoldersData } from '@/context/LandHoldersInformation'
 import { useFormContext } from '@/context/useFormContext'
 import { useValidatorContext } from '@/context/validators/useValidatorContext'
-import { useLanguageContext } from '@/context/language/useLanguageContext'
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
+const { $gettext } = useGettext()
 
 const router = useRouter()
 const { validation, newLandHoldersInformation } = useValidatorContext()
 const { formData, validateRegistrationForm } = useFormContext()
-const { getLanguage } = useLanguageContext()
-
 const selectedIndex = ref<number | null>(null)
 const scrollSection = ref<HTMLElement | null>(null)
 const landHoldersTableRef = ref<InstanceType<typeof LandHoldersTableComponent> | null>(null)
 
 const legalPersinalityOfLandholderOptions = computed(() => [
   {
-    label: getLanguage(
-      'register.landholdersInformation.form.landholderLegalPersonality.options.one',
-    ),
+    label: $gettext('Natural persons'),
     value: 'natural_person',
   } /*
   {
-    label: getLanguage(
-      'register.landholdersInformation.form.landholderLegalPersonality.options.two',
-    ),
+    label: $gettext('Legal entities'),
     value: 'legal_entity',
   }, */,
 ])
 
 // const wayToAddLandholdersInformationOptions = computed(() => [
-//   { label: getLanguage('register.landholdersInformation.form.chooseLandholderInfoMethod.options.one'), value: "fill" },
-//   { label: getLanguage('register.landholdersInformation.form.chooseLandholderInfoMethod.options.two'), value: "import" },
+//   { label: $gettext('Fill in data'), value: "fill" },
+//   { label: $gettext('Import data files'), value: "import" },
 // ]);
 
 const initialLandHoldersData: LandHoldersData = {
@@ -154,9 +149,9 @@ const ownerHolderToRemove = ref<number | null>(null)
 
 <template>
   <WholeWidthCardComponent bg-color="#f0fcf7">
-    <h1 class="text-lg font-bold">{{ getLanguage('register.landholdersInformation.card') }}</h1>
+    <h1 class="text-lg font-bold">{{ $gettext('LANDHOLDERS INFORMATION') }}</h1>
     <p>
-      {{ getLanguage('register.landholdersInformation.cardSubtitle') }}
+      {{ $gettext('Fill in the information about the landholder or land owner. This person is legally responsible for the land being registered.') }}
     </p>
   </WholeWidthCardComponent>
 
@@ -164,8 +159,8 @@ const ownerHolderToRemove = ref<number | null>(null)
     <h2 class="text-lg font-bold text-center text-gray-700">
       {{
         selectedIndex !== null
-          ? getLanguage('register.landholdersInformation.editingLandholder')
-          : getLanguage('register.landholdersInformation.addNewLandholder')
+          ? $gettext('Editing Landholder')
+          : $gettext('Add New Landholder')
       }}
     </h2>
     <div class="h-10 mb-5">
@@ -174,7 +169,7 @@ const ownerHolderToRemove = ref<number | null>(null)
         name="legalPersonality"
         v-model="newLandHoldersInformation.legalPersonality"
         :group-label="
-          getLanguage('register.landholdersInformation.form.landholderLegalPersonality.label')
+          $gettext('Legal personality of landholder')
         "
         :vertical-alignment="false"
         :show-divider="false"
@@ -182,9 +177,9 @@ const ownerHolderToRemove = ref<number | null>(null)
     </div>
     <!-- <div class="flex items-center space-x-2">
       <RadioButtonGroupComponent name="wayToAddLandholdersInformation"
-        :group-label="getLanguage('register.landholdersInformation.form.chooseLandholderInfoMethod.label')"
+        :group-label="$gettext('Choose a way to add landholder\'s information')"
         :options="wayToAddLandholdersInformationOptions"
-        :tooltip-text="getLanguage('register.landholdersInformation.form.chooseLandholderInfoMethod.tooltip')"
+        :tooltip-text="$gettext('Select how you want to provide the landholder\'s details: manually entering the data or importing from a file.')"
         v-model="newLandHoldersInformation.wayToAddLandholdersInformation" :vertical-alignment="false" />
     </div> -->
     <!-- <br /> -->
@@ -193,14 +188,14 @@ const ownerHolderToRemove = ref<number | null>(null)
       <div class="flex flex-row space-x-4">
         <div class="flex flex-col">
           <TextInputComponent
-            :label="getLanguage('register.landholdersInformation.form.id')"
+            :label="$gettext('Personal ID')"
             id="id"
             v-model="newLandHoldersInformation.id"
             :errors="validation.landHoldersInformation.id.$errors"
           />
         </div>
         <CalendarComponent
-          :label="getLanguage('register.landholdersInformation.form.dateOfBirth')"
+          :label="$gettext('Date of birth')"
           id="dateOfBirth"
           v-model="newLandHoldersInformation.dateOfBirth"
           :errors="validation.landHoldersInformation.dateOfBirth.$errors"
@@ -209,7 +204,7 @@ const ownerHolderToRemove = ref<number | null>(null)
       <div class="flex flex-row space-x-4 w-full py-2">
         <div class="w-1/2">
           <TextInputComponent
-            :label="getLanguage('register.landholdersInformation.form.name')"
+            :label="$gettext('Name')"
             id="name"
             v-model="newLandHoldersInformation.name"
             :errors="validation.landHoldersInformation.name.$errors"
@@ -217,7 +212,7 @@ const ownerHolderToRemove = ref<number | null>(null)
         </div>
         <div class="w-1/2">
           <TextInputComponent
-            :label="getLanguage('register.landholdersInformation.form.mothersName')"
+            :label="$gettext('Mother\'s name')"
             id="mothersName"
             v-model="newLandHoldersInformation.mothersName"
             :errors="validation.landHoldersInformation.mothersName.$errors"
@@ -229,8 +224,8 @@ const ownerHolderToRemove = ref<number | null>(null)
       <button class="br-button secondary" @click="handleClear">
         {{
           selectedIndex !== null
-            ? getLanguage('register.landholdersInformation.cancel')
-            : getLanguage('register.landholdersInformation.clear')
+            ? $gettext('Cancel')
+            : $gettext('Clear')
         }}
       </button>
       <button
@@ -239,40 +234,40 @@ const ownerHolderToRemove = ref<number | null>(null)
       >
         {{
           selectedIndex !== null
-            ? getLanguage('register.landholdersInformation.saveChanges')
-            : getLanguage('register.landholdersInformation.addOwnerHolder')
+            ? $gettext('Save changes')
+            : $gettext('Add owner/holder')
         }}
       </button>
     </div>
   </WholeWidthCardComponent>
 
   <h1 class="text-lg font-bold pl-4 primary-color">
-    {{ getLanguage('register.landholdersInformation.ListOfOwnersHolders') }}
+    {{ $gettext('List of Owners/Holders') }}
   </h1>
 
   <ModalComponent
     :is-open="isWarningEditModalOpen"
     @close="() => (isWarningEditModalOpen = false)"
-    :title="getLanguage('register.landholdersInformation.warningModalTitle')"
+    :title="$gettext('Attention')"
   >
-    <p>{{ getLanguage('register.landholdersInformation.warningModalRequired') }}</p>
+    <p>{{ $gettext('All fields must be filled in before saving.') }}</p>
   </ModalComponent>
 
   <ModalComponent
     :is-open="isConfirmModalOpen"
     @close="cancelRemoveOwnerHolder"
     @confirm="handleDeleteOwner"
-    :title="getLanguage('register.landholdersInformation.warningModalTitle')"
+    :title="$gettext('Attention')"
   >
-    <p>{{ getLanguage('register.landholdersInformation.warningModalDelete') }}</p>
+    <p>{{ $gettext('Are you sure you want to delete the Owner/Holder?') }}</p>
   </ModalComponent>
 
   <ModalComponent
     :is-open="isWarningModalOpen"
     @close="() => (isWarningModalOpen = false)"
-    :title="getLanguage('register.landholdersInformation.warningModalTitle')"
+    :title="$gettext('Attention')"
   >
-    <p>{{ getLanguage('register.landholdersInformation.warningModal') }}</p>
+    <p>{{ $gettext('Please add at least one landholder.') }}</p>
   </ModalComponent>
 
   <WholeWidthCardComponent>
@@ -287,10 +282,10 @@ const ownerHolderToRemove = ref<number | null>(null)
 
   <div class="flex justify-between space-x-4 mt-4 mb-10 mx-3">
     <RouterLink class="br-button secondary" to="/register/registrars_details">
-      {{ getLanguage('register.previousButton') }}
+      {{ $gettext('Previous') }}
     </RouterLink>
     <button class="br-button primary mr-3" @click="handleNextButton">
-      {{ getLanguage('register.nextButton') }}
+      {{ $gettext('Next') }}
     </button>
   </div>
 </template>

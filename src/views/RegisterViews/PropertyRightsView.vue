@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGettext } from 'vue3-gettext'
 import RadioButtonGroupComponent from '@/components/RadioButtonGroupComponent.vue'
 import SelectInputComponent from '@/components/SelectInputComponent.vue'
 import TextInputComponent from '@/components/TextInputComponent.vue'
@@ -6,11 +7,11 @@ import WholeWidthCardComponent from '@/components/WholeWidthCardComponent.vue'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import States from '../../config/states_municipalities.json'
+const { $gettext } = useGettext()
 
 import CalendarComponent from '@/components/CalendarComponent.vue'
 import LandDocumentsTableComponent from '@/components/LandDocumentsTableComponent.vue'
 import ModalComponent from '@/components/ModalComponent.vue'
-import { useLanguageContext } from '@/context/language/useLanguageContext'
 import type { PropertyRightsData } from '@/context/PropertyRights'
 import { useFormContext } from '@/context/useFormContext'
 import { useValidatorContext } from '@/context/validators/useValidatorContext'
@@ -25,15 +26,13 @@ import { ValidationHelper } from '@/utils/validationHelper'
 const { validation, newPropertyRightsInformation } = useValidatorContext()
 const { formData, validateRegistrationForm, resetFormData } = useFormContext()
 
-const { getLanguage } = useLanguageContext()
-
 const warningOptions = {
-  invalidForm: getLanguage('register.propertyRights.invalidForm'),
-  requestError: getLanguage('register.propertyRights.requestError'),
-  previousStepsBlankFields: getLanguage('register.propertyRights.previousStepsBlankFields'),
-  noMapData: getLanguage('register.propertyRights.noMapData'),
-  serverError: getLanguage('register.propertyRights.serverError'),
-  connectionError: getLanguage('register.propertyRights.connectionError'),
+  invalidForm: $gettext('Please add at least one Land Document'),
+  requestError: $gettext('You are about to submit a form with invalid data. Please check the fields and try again.'),
+  previousStepsBlankFields: $gettext('There are required fields in previous steps that need to be filled'),
+  noMapData: $gettext('No map data found. Please return to the property map step to vectorize the required areas.'),
+  serverError: $gettext('Unexpected server error. Please try again.'),
+  connectionError: $gettext('Connection error or server unavailable. Please check your connection and try again.'),
 }
 const warningText = ref('')
 
@@ -52,30 +51,30 @@ const landDocumentsTableRef = ref<InstanceType<typeof LandDocumentsTableComponen
 
 const propertyLandholding = computed(() => [
   {
-    label: getLanguage('register.propertyRights.form.propertyOrLandholdingOption.property'),
+    label: $gettext('Property'),
     value: 'property',
   },
   /*{
-    label: getLanguage('register.propertyRights.form.propertyOrLandholdingOption.landholding'),
+    label: $gettext('Landholding'),
     value: 'landholding',
   },*/
 ])
 
 const documentTypes = computed(() => [
-  { value: 'deed', label: getLanguage('register.propertyRights.form.documentTypeOptions.deed') },
+  { value: 'deed', label: $gettext('Deed') },
   {
     value: 'titleDeed',
-    label: getLanguage('register.propertyRights.form.documentTypeOptions.titledeed'),
+    label: $gettext('Title Deed'),
   },
   {
     value: 'purchaseAndSaleAgreement',
-    label: getLanguage('register.propertyRights.form.documentTypeOptions.purchaseandsaleagreement'),
+    label: $gettext('Purchase and Sale Agreement'),
   },
 ])
 
 // const legalReserveOptions = computed(() => [
-//   { label: getLanguage('register.propertyRights.form.legalReserve.legalReserveOptions.yes'), value: true },
-//   { label: getLanguage('register.propertyRights.form.legalReserve.legalReserveOptions.no'), value: false }
+//   { label: $gettext('Yes'), value: true },
+//   { label: $gettext('No'), value: false }
 // ]);
 
 const initialPropertyRightsData: PropertyRightsData = {
@@ -240,8 +239,8 @@ const handleAddPropertyInformation = async () => {
     const invalidFields = validationHelper.getPropertyRightsInvalidFields()
 
     if (invalidFields.length > 0) {
-      let message = getLanguage('register.propertyRights.hasBlankFields') + '\n\n'
-      message += `${getLanguage('register.propertyRights.validationError.fields')}: ${invalidFields.join(', ')}`
+      let message = $gettext('All fields must be filled in before saving.') + '\n\n'
+      message += `${$gettext('Required fields')}: ${invalidFields.join(', ')}`
       warningText.value = message
       isWarningModalOpen.value = true
     }
@@ -285,7 +284,7 @@ const validateForm = () => {
 const validationHelper = new ValidationHelper({
   validation,
   formData,
-  getLanguage,
+  $gettext,
 })
 
 const handleRegisterButton = async () => {
@@ -393,8 +392,8 @@ const handleSuccessConfirm = async () => {
 <template>
   <div ref="scrollSection">
     <WholeWidthCardComponent bg-color="#f0fcf7">
-      <h1 class="text-lg font-bold">{{ getLanguage('register.propertyRights.card') }}</h1>
-      <p>{{ getLanguage('register.propertyRights.cardSubtitle') }}</p>
+      <h1 class="text-lg font-bold">{{ $gettext('OWNER DETAILS AND DOCUMENTATION.') }}</h1>
+      <p>{{ $gettext('Provide information of the property or landholding documentation.') }}</p>
     </WholeWidthCardComponent>
   </div>
 
@@ -403,14 +402,14 @@ const handleSuccessConfirm = async () => {
     <h2 class="text-lg font-bold text-center text-gray-700">
       {{
         selectedIndex !== null
-          ? `${getLanguage('register.propertyRights.form.editingProperty')}`
-          : `${getLanguage('register.propertyRights.form.addNewProperty')}`
+          ? `${$gettext('Editing Property')}`
+          : `${$gettext('Add New Property')}`
       }}
     </h2>
     <div class="py-3">
       <RadioButtonGroupComponent
         name="propertyLandholgin"
-        :groupLabel="`${getLanguage('register.propertyRights.form.propertyOrLandholding')}`"
+        :groupLabel="`${$gettext('Property or Landholding')}`"
         :options="propertyLandholding"
         v-model="newPropertyRightsInformation.propertyLandholding"
         :vertical-alignment="false"
@@ -420,7 +419,7 @@ const handleSuccessConfirm = async () => {
     <div class="grid grid-cols-6 gap-4">
       <div class="col-span-3 col-start-1">
         <TextInputComponent
-          :label="`${getLanguage('register.propertyRights.form.registeredPropertyName')} ${getLanguage('register.propertyRights.form.required')}`"
+          :label="`${$gettext('Registered Property Name')} ${$gettext('(Required)')}`"
           id="property-name"
           v-model="newPropertyRightsInformation.registeredPropertyName"
           :errors="validation.propertyRights.registeredPropertyName.$errors"
@@ -428,7 +427,7 @@ const handleSuccessConfirm = async () => {
       </div>
       <div class="col-span-1 col-start-4">
         <TextInputComponent
-          :label="`${getLanguage('register.propertyRights.form.area')} ${getLanguage('register.propertyRights.form.required')}`"
+          :label="`${$gettext('Area')} ${$gettext('(Required)')}`"
           type="number"
           id="area"
           v-model="newPropertyRightsInformation.area"
@@ -438,8 +437,8 @@ const handleSuccessConfirm = async () => {
       <div class="col-span-2 col-start-5">
         <SelectInputComponent
           id="document-type"
-          :placeholder="`${getLanguage('register.propertyRights.form.documentTypePlaceHolder')}`"
-          :label="`${getLanguage('register.propertyRights.form.documentType')}`"
+          :placeholder="`${$gettext('Select the document type')}`"
+          :label="`${$gettext('Document Type')}`"
           :items="documentTypes"
           v-model="newPropertyRightsInformation.documentType"
           :errors="validation.propertyRights.documentType.$errors"
@@ -449,16 +448,16 @@ const handleSuccessConfirm = async () => {
     <div class="grid grid-cols-8 gap-4 mt-3">
       <div class="col-span-4 col-start-1">
         <TextInputComponent
-          :label="`${getLanguage('register.propertyRights.form.titleDeedOrLandDocument')}`"
+          :label="`${$gettext('Title deed/ Land Document')}`"
           id="title-deed-land-document"
-          :tooltip-text="`${getLanguage('register.propertyRights.form.titleDeedOrLandDocumentTooltip')}`"
+          :tooltip-text="`${$gettext('Official legal document proving ownership of a property or land. Ensure it is properly registered and up to date.')}`"
           v-model="newPropertyRightsInformation.titleDeedLandDocument"
           :errors="validation.propertyRights.titleDeedLandDocument.$errors"
         />
       </div>
       <div class="col-span-2 col-start-5">
         <CalendarComponent
-          :label="`${getLanguage('register.propertyRights.form.documentDate')}`"
+          :label="`${$gettext('Document Date')}`"
           id="document-date"
           v-model="newPropertyRightsInformation.documentDate"
           :errors="validation.propertyRights.documentDate.$errors"
@@ -466,7 +465,7 @@ const handleSuccessConfirm = async () => {
       </div>
       <div class="col-span-2 col-start-7">
         <TextInputComponent
-          :label="`${getLanguage('register.propertyRights.form.book')}`"
+          :label="`${$gettext('Book')}`"
           id="book"
           v-model="newPropertyRightsInformation.book"
           :errors="validation.propertyRights.book.$errors"
@@ -476,7 +475,7 @@ const handleSuccessConfirm = async () => {
     <div class="grid grid-cols-8 gap-4 mt-3">
       <div class="col-span-2 col-start-1">
         <TextInputComponent
-          :label="`${getLanguage('register.propertyRights.form.page')}`"
+          :label="`${$gettext('Page')}`"
           id="page"
           v-model="newPropertyRightsInformation.page"
           :errors="validation.propertyRights.page.$errors"
@@ -484,9 +483,9 @@ const handleSuccessConfirm = async () => {
       </div>
       <div class="col-span-2 col-start-3">
         <SelectInputComponent
-          :label="`${getLanguage('register.propertyRights.form.stateOfTheNotaryOffice')}`"
+          :label="`${$gettext('State of The Notary Office')}`"
           :items="states"
-          :placeholder="`${getLanguage('register.propertyRights.form.stateOfTheNotaryOfficePlaceHolder')}`"
+          :placeholder="`${$gettext('Select the state')}`"
           id="state"
           v-model="newPropertyRightsInformation.stateOfTheNotaryOffice"
           :errors="validation.propertyRights.stateOfTheNotaryOffice.$errors"
@@ -494,9 +493,9 @@ const handleSuccessConfirm = async () => {
       </div>
       <div class="col-span-4 col-start-5">
         <SelectInputComponent
-          :label="`${getLanguage('register.propertyRights.form.cityOfTheNotaryOffice')}`"
+          :label="`${$gettext('City of The Notary Office')}`"
           :items="cities"
-          :placeholder="`${getLanguage('register.propertyRights.form.cityOfTheNotaryOfficePlaceHolder')}`"
+          :placeholder="`${$gettext('Select the city')}`"
           id="city"
           v-model="newPropertyRightsInformation.cityOfTheNotaryOffice"
           :errors="validation.propertyRights.cityOfTheNotaryOffice.$errors"
@@ -507,24 +506,24 @@ const handleSuccessConfirm = async () => {
     <div class="grid grid-cols-4 gap-4 mt-3">
       <div class="col-span-2 col-start-1">
         <!-- <TextInputComponent
-          :label="`${getLanguage('register.propertyRights.form.nationalRuralLandRegistrySystemCode')} ${getLanguage('register.propertyRights.form.required')}`"
+          :label="`${$gettext('National Rural Land Registry System Code')} ${$gettext('(Required)')}`"
           id="national-rural-land-registry-system-code"
-          :tooltip-text="`${getLanguage('register.propertyRights.form.nationalRuralLandRegistrySystemCodeTooltip')}`"
+          :tooltip-text="`${$gettext('Unique identifier assigned to rural properties within the National Rural Land Registry System.')}`"
           v-model="newPropertyRightsInformation.nationalRuralLandRegistrySystemCode"
           :errors="validation.propertyRights.nationalRuralLandRegistrySystemCode.$errors" /> -->
         <TextInputComponent
-          :label="`${getLanguage('register.propertyRights.form.propertyCertification')}`"
+          :label="`${$gettext('Property Certification')}`"
           id="property-certification"
-          :tooltip-text="`${getLanguage('register.propertyRights.form.propertyCertificationTooltip')}`"
+          :tooltip-text="`${$gettext('Certification that verifies the legal status and compliance of the property according to national regulations.')}`"
           v-model="newPropertyRightsInformation.propertyCertification"
           :errors="validation.propertyRights.propertyCertification.$errors"
         />
       </div>
       <div class="col-span-2 col-start-3">
         <TextInputComponent
-          :label="`${getLanguage('register.propertyRights.form.nationalRuralPropertyRegistrationNumber')}`"
+          :label="`${$gettext('National Rural Property Registration Number')}`"
           id="national-rural-property-registration-number"
-          :tooltip-text="`${getLanguage('register.propertyRights.form.nationalRuralPropertyRegistrationNumberTooltip')}`"
+          :tooltip-text="`${$gettext('Official registration number of the rural property, used for legal and administrative purposes.')}`"
           v-model="newPropertyRightsInformation.nationalRuralPropertyRegistrationNumber"
           :errors="validation.propertyRights.nationalRuralPropertyRegistrationNumber.$errors"
         />
@@ -536,20 +535,20 @@ const handleSuccessConfirm = async () => {
     </div> -->
 
     <!-- <div class="py-3">
-      <RadioButtonGroupComponent :groupLabel="`${getLanguage('register.propertyRights.form.legalReserve.label')}`"
+      <RadioButtonGroupComponent :groupLabel="`${$gettext('Does it have a registered Legal Reserve and/or an approved but not registered Legal Reserve?')}`"
         name="legal-reserve" :options="legalReserveOptions" v-model="newPropertyRightsInformation.legalReserve"
         :vertical-alignment="false" />
     </div>
 
     <p v-if="!newPropertyRightsInformation.legalReserve">
-      {{ getLanguage('register.propertyRights.form.legalReserve2') }}
+      {{ $gettext('Does not have a registered Legal Reserve and/or an approved but not registered Legal Reserve.') }}
     </p> -->
     <div class="flex flex-row space-x-4 mt-4 mb-5">
       <button class="br-button secondary" @click="handleClear">
         {{
           selectedIndex !== null
-            ? `${getLanguage('register.propertyRights.form.cancel')}`
-            : `${getLanguage('register.propertyRights.form.clear')}`
+            ? `${$gettext('Cancel')}`
+            : `${$gettext('Clear')}`
         }}
       </button>
       <button
@@ -558,8 +557,8 @@ const handleSuccessConfirm = async () => {
       >
         {{
           selectedIndex !== null
-            ? `${getLanguage('register.propertyRights.form.saveChanges')}`
-            : `${getLanguage('register.propertyRights.form.add')}`
+            ? `${$gettext('Save Changes')}`
+            : `${$gettext('Add')}`
         }}
       </button>
     </div>
@@ -567,7 +566,7 @@ const handleSuccessConfirm = async () => {
   <!-- </form> -->
 
   <h1 class="text-lg font-bold pl-4 primary-color">
-    {{ getLanguage('register.propertyRights.listOfInformedLandDocuments') }}
+    {{ $gettext('List of informed land documents') }}
   </h1>
 
   <WholeWidthCardComponent>
@@ -591,84 +590,84 @@ const handleSuccessConfirm = async () => {
     @confirm="handleConfirm"
     :title="
       isAreaOverDiffLimit
-        ? getLanguage('register.propertyRights.modalOverAreaLimitTitle')
-        : getLanguage('register.propertyRights.attentionModalTitle')
+        ? $gettext('Area difference exceeded')
+        : $gettext('Attention')
     "
   >
     <div v-if="isAreaOverDiffLimit && !isDiffLimitProhibitive">
       <p>
-        {{ getLanguage('register.propertyRights.confirmModalOverAreaLimitWarning') }}
+        {{ $gettext('The property area specified in the documents differs from the area calculated on the map.') }}
       </p>
       <p>
         <b>
-          {{ getLanguage('register.propertyRights.confirmModalOverAreaLimitMap') }}
+          {{ $gettext('Area from map: ') }}
         </b>
         {{ parseFloat(propertyAreaFromMap).toFixed(4) }}(ha)
       </p>
       <p>
         <b>
-          {{ getLanguage('register.propertyRights.confirmModalOverAreaLimitDocs') }}
+          {{ $gettext('Area from documents: ') }}
         </b>
         {{ propertyAreaFromDocs.toFixed(4) }}(ha)
       </p>
       <p>
-        {{ getLanguage('register.propertyRights.confirmModalOverAreaLimitRule') }}
+        {{ $gettext('As a rule, the difference should not exceed: ') }}
         <b>{{ DiffAreaConfig.percentual_limit * 100 }}%.</b>
       </p>
-      <p>{{ getLanguage('register.propertyRights.confirmModalOverAreaLimitQuestion') }}</p>
+      <p>{{ $gettext('Do you wish to proceed with the registration?') }}</p>
     </div>
-    <p v-else>{{ getLanguage('register.propertyRights.confirmModal') }}</p>
+    <p v-else>{{ $gettext('Are you sure you want to send register?') }}</p>
   </ModalComponent>
 
   <ModalComponent
     :is-open="isSavingDataModalOpen"
     @close="() => (isSavingDataModalOpen = false)"
     :hide-buttons="true"
-    :title="getLanguage('register.propertyRights.savingDataModalTitle')"
+    :title="$gettext('Wait')"
   >
-    <p>{{ getLanguage('register.propertyRights.savingData') }}</p>
+    <p>{{ $gettext('Saving property\'s data.') }}</p>
   </ModalComponent>
 
   <ModalComponent
     :is-open="isDiffAreaOverLimitModalOpen"
     @close="() => (isDiffAreaOverLimitModalOpen = false)"
-    :title="getLanguage('register.propertyRights.modalOverAreaLimitTitle')"
+    :title="$gettext('Area difference exceeded')"
   >
     <p>
-      {{ getLanguage('register.propertyRights.confirmModalOverAreaLimitWarning') }}
+      {{ $gettext('The property area specified in the documents differs from the area calculated on the map.') }}
     </p>
     <p>
       <b>
-        {{ getLanguage('register.propertyRights.confirmModalOverAreaLimitMap') }}
+        {{ $gettext('Area from map: ') }}
       </b>
       {{ parseFloat(propertyAreaFromMap).toFixed(4) }}(ha)
     </p>
     <p>
       <b>
-        {{ getLanguage('register.propertyRights.confirmModalOverAreaLimitDocs') }}
+        {{ $gettext('Area from documents: ') }}
       </b>
       {{ propertyAreaFromDocs.toFixed(4) }}(ha)
     </p>
     <p>
-      {{ getLanguage('register.propertyRights.confirmModalOverAreaLimitRule') }}
+      {{ $gettext('As a rule, the difference should not exceed: ') }}
       <b>{{ DiffAreaConfig.percentual_limit * 100 }}%.</b>
     </p>
-    <p>{{ getLanguage('register.propertyRights.areaDifferenceExceeded') }}</p>
+    <p>{{ $gettext('Please check the information provided and try again.') }}</p>
   </ModalComponent>
 
   <ModalComponent
     :is-open="isDeletePropertyInformationModalOpen"
     @close="cancelRemovePropertyInformation"
     @confirm="handleDeletePropertyInformation"
-    :title="getLanguage('register.propertyRights.attentionModalTitle')"
+    :title="$gettext('Attention')"
   >
-    <p>{{ getLanguage('register.propertyRights.deletePropertyInformationModal') }}</p>
+    <p>{{ $gettext('Are you sure you want to delete the entered land documents?') }}</p>
   </ModalComponent>
 
   <ModalComponent
     :is-open="isWarningModalOpen"
     @close="() => (isWarningModalOpen = false)"
-    :title="getLanguage('register.propertyRights.attentionModalTitle')"
+    :title="$gettext('Attention')"
   >
     <p>{{ warningText }}</p>
   </ModalComponent>
@@ -676,25 +675,25 @@ const handleSuccessConfirm = async () => {
   <ModalComponent
     :is-open="isWarningEditModalOpen"
     @close="() => (isWarningEditModalOpen = false)"
-    :title="getLanguage('register.propertyRights.attentionModalTitle')"
+    :title="$gettext('Attention')"
   >
-    <p>{{ getLanguage('register.propertyRights.hasBlankFields') }}</p>
+    <p>{{ $gettext('All fields must be filled in before saving.') }}</p>
   </ModalComponent>
 
   <ModalComponent
     :is-open="isSuccessModalOpen"
     @close="handleSuccessConfirm"
-    :title="getLanguage('register.propertyRights.successModalTitle')"
+    :title="$gettext('Success')"
   >
-    <p>{{ getLanguage('register.propertyRights.successModal') }}</p>
+    <p>{{ $gettext('Data registered successfully') }}</p>
   </ModalComponent>
 
   <div class="flex justify-between space-x-4 mt-4 mb-10 mx-3">
     <RouterLink class="br-button secondary" to="/register/rural_property">
-      {{ getLanguage('register.previousButton') }}
+      {{ $gettext('Previous') }}
     </RouterLink>
     <button class="br-button primary" @click="handleRegisterButton">
-      {{ getLanguage('register.register') }}
+      {{ $gettext('Register') }}
     </button>
   </div>
 </template>

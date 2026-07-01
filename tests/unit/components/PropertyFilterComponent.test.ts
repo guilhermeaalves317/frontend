@@ -1,13 +1,15 @@
 import { mount, VueWrapper } from '@vue/test-utils'
+import { ref } from 'vue'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import PropertyFilterComponent from '@/components/PropertyFilterComponent.vue'
 import SelectInputComponent from '@/components/SelectInputComponent.vue'
 import TextInputComponent from '@/components/TextInputComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-vi.mock('@/context/language/useLanguageContext', () => ({
-  useLanguageContext: () => ({
-    getLanguage: (key: string) => key, // Just return the key for simplicity
+vi.mock('vue3-gettext', () => ({
+  useGettext: () => ({
+    current: ref('pt-br'),
+    $gettext: (msgid: string) => msgid,
   }),
 }))
 

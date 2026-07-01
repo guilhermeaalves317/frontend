@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useGettext } from 'vue3-gettext'
 import {
   Select,
   SelectContent,
@@ -6,8 +7,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useLanguageContext } from '@/context/language/useLanguageContext'
 import { computed, ref } from 'vue'
+
+const { $gettext } = useGettext()
 
 const props = defineProps([
   'placeholder',
@@ -29,8 +31,6 @@ const selectedValue = computed({
   get: () => props.modelValue,
   set: (value: string) => emit('update:modelValue', value),
 })
-
-const { getLanguage } = useLanguageContext()
 
 const stringLabel = ref(props.label as string)
 const requiredText = computed(() => stringLabel.value.indexOf(' (Required)'))
@@ -70,7 +70,7 @@ const isDisabled = computed(() => props.disabled || false)
       </SelectContent>
       <div v-for="error in props.errors" :key="error.$uid" class="text-red-600">
         <span v-if="error.$validator == 'required'"
-          >{{ labelToError }} {{ getLanguage('register.errors.isRequired') }}!</span
+          >{{ labelToError }} {{ $gettext('is required') }}!</span
         >
       </div>
     </Select>
